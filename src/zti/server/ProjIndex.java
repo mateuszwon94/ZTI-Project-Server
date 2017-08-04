@@ -40,36 +40,9 @@ public class ProjIndex extends HttpServlet {
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 
-		out.println("<h1>Stops information</h1>");
-
-		try {
-			// Class.forName("org.apache.derby.jdbc.ClientDriver");
-			// url = "jdbc:postgresql://host:port/database"
-			String url = "jdbc:postgresql://qdjjtnkv.db.elephantsql.com:5432/xggfrvfc";
-			String username = "xggfrvfc";
-			String password = "q1gFyHQUPS0ZkVzS9nqmlshn0CzDNGgC";
-			Connection conn = DriverManager.getConnection(url, username, password);
-			Statement stmt = conn.createStatement();
-			String sql = "SELECT * FROM public.stops";
-			ResultSet rs = stmt.executeQuery(sql);
-			out.println("<table>");
-			out.println("<tr><th>id</th><th>name</th><th>nz</th><th>loc_x</th><th>loc_y</th></tr>");
-			while ( rs.next() ) {
-				out.print("<tr>");
-				out.print("<td>" + rs.getInt("id") + "</td>");
-				out.print("<td>" + rs.getString("name") + "</td>");
-				out.print("<td>" + rs.getBoolean("nz") + "</td>");
-				out.print("<td>" + rs.getFloat("loc_x") + "</td>");
-				out.print("<td>" + rs.getFloat("loc_y") + "</td>");
-				out.println("</tr>");
-			}
-			out.println("</table>");
-			rs.close();
-			stmt.close();
-			conn.close();
-		} catch ( Exception e ) {
-			out.println(e);
-		}
+		out.println("<h1>Mateusz Winiarski</h1>");
+		out.println("<h2>ZTI - 2017</h2>");
+		out.println("<p>Projekt wyszukiwarki polaczen</p>");
 	}
 
 	/**
