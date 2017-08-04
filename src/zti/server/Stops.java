@@ -2,6 +2,7 @@ package zti.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -31,13 +32,15 @@ import org.w3c.dom.Element;
 public class Stops extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-	private final String ROOT = "stops";
-	private final String STOP = "stop";
-	private final String ID = "id";
-	private final String NAME = "name";
-	private final String NZ = "nz";
-	private final String LOC_X = "loc_x";
-	private final String LOC_Y = "loc_y";
+	private final String ROOT 	= "stops";
+	private final String STOP 	= "stop";
+	private final String ID 	= "id";
+	private final String NAME 	= "name";
+	private final String NZ 	= "nz";
+	private final String LOC_X 	= "loc_x";
+	private final String LOC_Y 	= "loc_y";
+	private final String CONNS 	= "conns";
+	private final String CONN 	= "conn";
 
 	public Stops() {
 		super();
@@ -89,6 +92,12 @@ public class Stops extends HttpServlet {
 				stopElement.appendChild(createElement(doc, NZ, Boolean.toString(rs.getBoolean(NZ))));
 				stopElement.appendChild(createElement(doc, LOC_X, Float.toString(rs.getFloat(LOC_X))));
 				stopElement.appendChild(createElement(doc, LOC_Y, Float.toString(rs.getFloat(LOC_Y))));
+				
+				Element connsElement = doc.createElement(CONNS);
+				for (Integer connection : (Integer[])(rs.getArray(CONN).getArray())) {
+					connsElement.appendChild(createElement(doc, CONN, connection.toString()));
+				}
+				stopElement.appendChild(connsElement);
 				
 				rootElement.appendChild(stopElement);
 			}
