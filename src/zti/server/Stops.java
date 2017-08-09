@@ -3,8 +3,6 @@ package zti.server;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Array;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -27,6 +25,9 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import zti.server.util.*;
+import zti.server.sql.*;
 
 @WebServlet("/Stops")
 public class Stops extends HttpServlet {
@@ -57,24 +58,11 @@ public class Stops extends HttpServlet {
 
 		response.setContentType("text/xml");
 		PrintWriter out = response.getWriter();
-
-		Connection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
 		
+		ResultSet rs = null;
 		try {
-			// Class.forName("org.apache.derby.jdbc.ClientDriver");
-			// url = "jdbc:postgresql://host:port/database"
-			String url = "jdbc:postgresql://qdjjtnkv.db.elephantsql.com:5432/xggfrvfc";
-			String username = "xggfrvfc";
-			String password = "q1gFyHQUPS0ZkVzS9nqmlshn0CzDNGgC";
-			String sql = "SELECT * FROM public.stops";
-			
-			conn = DriverManager.getConnection(url, username, password);
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(sql);
+			rs = DataBaseConnection.createStatement().executeQuery(DataBaseConnection.GET_ALL_STOPS);
 
-			
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
@@ -88,14 +76,14 @@ public class Stops extends HttpServlet {
 				Element stopElement = doc.createElement(STOP);
 				
 				stopElement.setAttribute(ID, Integer.toString(rs.getInt(ID)));
-				stopElement.appendChild(createElement(doc, NAME, rs.getString(NAME)));
-				stopElement.appendChild(createElement(doc, NZ, Boolean.toString(rs.getBoolean(NZ))));
-				stopElement.appendChild(createElement(doc, LOC_X, Float.toString(rs.getFloat(LOC_X))));
-				stopElement.appendChild(createElement(doc, LOC_Y, Float.toString(rs.getFloat(LOC_Y))));
+				stopElement.appendChild(Util.createElement(doc, NAME, rs.getString(NAME)));
+				stopElement.appendChild(Util.createElement(doc, NZ, Boolean.toString(rs.getBoolean(NZ))));
+				stopElement.appendChild(Util.createElement(doc, LOC_X, Float.toString(rs.getFloat(LOC_X))));
+				stopElement.appendChild(Util.createElement(doc, LOC_Y, Float.toString(rs.getFloat(LOC_Y))));
 				
 				Element connsElement = doc.createElement(CONNS);
 				for (Integer connection : (Integer[])(rs.getArray(CONN).getArray())) {
-					connsElement.appendChild(createElement(doc, CONN, connection.toString()));
+					connsElement.appendChild(Util.createElement(doc, CONN, connection.toString()));
 				}
 				stopElement.appendChild(connsElement);
 				
@@ -104,21 +92,15 @@ public class Stops extends HttpServlet {
 			
 			doc.appendChild(rootElement);
 			
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(out);
-			transformer.transform(source, result);
+			Util.writeXmlToPrintWriter(doc, out);
 		} catch ( Exception e ) {
 			response.sendError(HttpServletResponse.SC_EXPECTATION_FAILED, e.toString());
-			printException(e, out);
+			Util.printException(e, out);
 		} finally {
 			try {
 				if (rs != null) rs.close();
-				if (stmt != null) stmt.close();
-				if (conn != null) conn.close();
 			} catch ( Exception e ) {
-				printException(e, out);
+				Util.printException(e, out);
 			}
 		}
 	}
@@ -129,18 +111,5 @@ public class Stops extends HttpServlet {
 		doGet(request, response);
 	}
 	
-	private Element createElement(Document doc, String name, String content) {
-		Element elem = doc.createElement(name);
-		elem.appendChild(doc.createTextNode(content));
-		return elem;
-	}
 	
-	private void printException(Exception e, PrintWriter out) {
-		out.print(e);
-		out.print("<br /><br />");
-		for (StackTraceElement ste : e.getStackTrace()) {
-			out.print(ste.toString());
-			out.print("<br />");
-		}	
-	}
 }

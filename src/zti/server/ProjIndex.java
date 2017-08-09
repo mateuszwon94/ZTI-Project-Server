@@ -42,7 +42,7 @@ public class ProjIndex extends HttpServlet {
 
 		out.println("<h1>Mateusz Winiarski</h1>");
 		out.println("<h2>ZTI - 2017</h2>");
-		out.println("<p>Projekt wyszukiwarki polaczen</p>");
+		out.println("<p>Projekt wyszukiwarki polaczen tramwajowych</p>");
 	}
 
 	/**
