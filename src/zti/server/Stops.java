@@ -82,7 +82,7 @@ public class Stops extends HttpServlet {
 				stopElement.appendChild(Util.createElement(doc, LOC_Y, Float.toString(rs.getFloat(LOC_Y))));
 				
 				Element connsElement = doc.createElement(CONNS);
-				for (Integer connection : (Integer[])(rs.getArray(CONN).getArray())) {
+				for (Integer connection : (Integer[])(rs.getArray(CONNS).getArray())) {
 					connsElement.appendChild(Util.createElement(doc, CONN, connection.toString()));
 				}
 				stopElement.appendChild(connsElement);

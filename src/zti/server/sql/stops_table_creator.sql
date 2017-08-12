@@ -6,7 +6,8 @@ CREATE TABLE stops (
 	nz		boolean	DEFAULT FALSE,
 	loc_x	real	NOT NULL,
 	loc_y	real	NOT NULL,
-	conn	int[]	DEFAULT NULL
+	conns	int[]	DEFAULT NULL,
+	times	int[]	DEFAULT NULL
 );
 
 INSERT INTO stops (name, loc_x, loc_y) VALUES ('Grzybowa',		28.8, 08.5);
@@ -47,40 +48,78 @@ INSERT INTO stops (name, loc_x, loc_y) VALUES ('Starorzeczna',	150.3, 40.5);
 INSERT INTO stops (name, loc_x, loc_y) VALUES ('Muzeum',		143.3, 56.3);
 INSERT INTO stops (name, loc_x, loc_y) VALUES ('Stawy',			146.3, 90.1);
 
-UPDATE Stops SET conn = ARRAY[2] WHERE name = 'Grzybowa';		-- 1
-UPDATE Stops SET conn = ARRAY[1, 3] WHERE name = 'Kamienna';		-- 2
-UPDATE Stops SET conn = ARRAY[2, 4] WHERE name = 'Plac Nowy';	-- 3
-UPDATE Stops SET conn = ARRAY[3, 5, 15] WHERE name = 'Stary Dwor';-- 4
-UPDATE Stops SET conn = ARRAY[4, 6] WHERE name = 'AGH';			-- 5
-UPDATE Stops SET conn = ARRAY[5, 7, 16] WHERE name = 'Nowy Dwor';-- 6
-UPDATE Stops SET conn = ARRAY[6, 8] WHERE name = '11. Listopada';-- 7
-UPDATE Stops SET conn = ARRAY[7, 9, 12] WHERE name = 'Zapomniana';-- 8
-UPDATE Stops SET conn = ARRAY[8, 10] WHERE name = 'Czerwone Maki';-- 9
-UPDATE Stops SET conn = ARRAY[9, 11] WHERE name = 'Granica';		-- 10
-UPDATE Stops SET conn = ARRAY[10] WHERE name = 'Lotnisko'; 		-- 11
-UPDATE Stops SET conn = ARRAY[8, 13] WHERE name = 'Borsucza';	-- 12
-UPDATE Stops SET conn = ARRAY[12, 19] WHERE name = 'Badylowa';	-- 13
-UPDATE Stops SET conn = ARRAY[22, 15] WHERE name = 'Rog';		-- 14
-UPDATE Stops SET conn = ARRAY[4, 14, 16] WHERE name = 'Teatr';	-- 15
-UPDATE Stops SET conn = ARRAY[15, 6, 17] WHERE name = 'Uniwersytet';-- 16
-UPDATE Stops SET conn = ARRAY[16, 18, 23] WHERE name = 'Poczta';	-- 17
-UPDATE Stops SET conn = ARRAY[17, 19] WHERE name = 'Wolowa';		-- 18
-UPDATE Stops SET conn = ARRAY[18, 20, 13] WHERE name = 'Krakowska';-- 19
-UPDATE Stops SET conn = ARRAY[20] WHERE name = 'Nocna';			-- 20
-UPDATE Stops SET conn = ARRAY[22] WHERE name = 'Ostra Brama';	-- 21
-UPDATE Stops SET conn = ARRAY[21, 14, 24] WHERE name = 'Dworzec';-- 22
-UPDATE Stops SET conn = ARRAY[17, 25] WHERE name = 'Standardowa';-- 23
-UPDATE Stops SET conn = ARRAY[22, 25, 28] WHERE name = 'Dluga';	-- 24
-UPDATE Stops SET conn = ARRAY[24, 29, 23] WHERE name = 'Opera';	-- 25
-UPDATE Stops SET conn = ARRAY[23, 30] WHERE name = 'Brzozowa';	-- 26
-UPDATE Stops SET conn = ARRAY[32] WHERE name = 'Ostatnia';		-- 27
-UPDATE Stops SET conn = ARRAY[24, 34] WHERE name = 'Stadion';	-- 28
-UPDATE Stops SET conn = ARRAY[25, 36] WHERE name = 'Rozana';		-- 29
-UPDATE Stops SET conn = ARRAY[36, 31, 26] WHERE name = 'Bystra';	-- 30
-UPDATE Stops SET conn = ARRAY[30, 32, 37] WHERE name = 'Sklep';	-- 31
-UPDATE Stops SET conn = ARRAY[31, 27] WHERE name = 'Odnogowa';	-- 32
-UPDATE Stops SET conn = ARRAY[34] WHERE name = 'Nowe Osiedle';	-- 33
-UPDATE Stops SET conn = ARRAY[33, 28, 35] WHERE name = 'Stare Osiedla';-- 34
-UPDATE Stops SET conn = ARRAY[34, 36] WHERE name = 'Starorzeczna';		-- 35
-UPDATE Stops SET conn = ARRAY[29, 35, 30] WHERE name = 'Muzeum';			-- 36
-UPDATE Stops SET conn = ARRAY[31] WHERE name = 'Stawy';			-- 37
+UPDATE Stops SET conns = ARRAY[2] WHERE name = 'Grzybowa';		-- 1
+UPDATE Stops SET conns = ARRAY[1, 3] WHERE name = 'Kamienna';		-- 2
+UPDATE Stops SET conns = ARRAY[2, 4] WHERE name = 'Plac Nowy';	-- 3
+UPDATE Stops SET conns = ARRAY[3, 5, 15] WHERE name = 'Stary Dwor';-- 4
+UPDATE Stops SET conns = ARRAY[4, 6] WHERE name = 'AGH';			-- 5
+UPDATE Stops SET conns = ARRAY[5, 7, 16] WHERE name = 'Nowy Dwor';-- 6
+UPDATE Stops SET conns = ARRAY[6, 8] WHERE name = '11. Listopada';-- 7
+UPDATE Stops SET conns = ARRAY[7, 9, 12] WHERE name = 'Zapomniana';-- 8
+UPDATE Stops SET conns = ARRAY[8, 10] WHERE name = 'Czerwone Maki';-- 9
+UPDATE Stops SET conns = ARRAY[9, 11] WHERE name = 'Granica';		-- 10
+UPDATE Stops SET conns = ARRAY[10] WHERE name = 'Lotnisko'; 		-- 11
+UPDATE Stops SET conns = ARRAY[8, 13] WHERE name = 'Borsucza';	-- 12
+UPDATE Stops SET conns = ARRAY[12, 19] WHERE name = 'Badylowa';	-- 13
+UPDATE Stops SET conns = ARRAY[22, 15] WHERE name = 'Rog';		-- 14
+UPDATE Stops SET conns = ARRAY[4, 14, 16] WHERE name = 'Teatr';	-- 15
+UPDATE Stops SET conns = ARRAY[15, 6, 17] WHERE name = 'Uniwersytet';-- 16
+UPDATE Stops SET conns = ARRAY[16, 18, 23] WHERE name = 'Poczta';	-- 17
+UPDATE Stops SET conns = ARRAY[17, 19] WHERE name = 'Wolowa';		-- 18
+UPDATE Stops SET conns = ARRAY[18, 20, 13] WHERE name = 'Krakowska';-- 19
+UPDATE Stops SET conns = ARRAY[20] WHERE name = 'Nocna';			-- 20
+UPDATE Stops SET conns = ARRAY[22] WHERE name = 'Ostra Brama';	-- 21
+UPDATE Stops SET conns = ARRAY[21, 14, 24] WHERE name = 'Dworzec';-- 22
+UPDATE Stops SET conns = ARRAY[17, 25] WHERE name = 'Standardowa';-- 23
+UPDATE Stops SET conns = ARRAY[22, 25, 28] WHERE name = 'Dluga';	-- 24
+UPDATE Stops SET conns = ARRAY[24, 29, 23] WHERE name = 'Opera';	-- 25
+UPDATE Stops SET conns = ARRAY[23, 30] WHERE name = 'Brzozowa';	-- 26
+UPDATE Stops SET conns = ARRAY[32] WHERE name = 'Ostatnia';		-- 27
+UPDATE Stops SET conns = ARRAY[24, 34] WHERE name = 'Stadion';	-- 28
+UPDATE Stops SET conns = ARRAY[25, 36] WHERE name = 'Rozana';		-- 29
+UPDATE Stops SET conns = ARRAY[36, 31, 26] WHERE name = 'Bystra';	-- 30
+UPDATE Stops SET conns = ARRAY[30, 32, 37] WHERE name = 'Sklep';	-- 31
+UPDATE Stops SET conns = ARRAY[31, 27] WHERE name = 'Odnogowa';	-- 32
+UPDATE Stops SET conns = ARRAY[34] WHERE name = 'Nowe Osiedle';	-- 33
+UPDATE Stops SET conns = ARRAY[33, 28, 35] WHERE name = 'Stare Osiedla';-- 34
+UPDATE Stops SET conns = ARRAY[34, 36] WHERE name = 'Starorzeczna';		-- 35
+UPDATE Stops SET conns = ARRAY[29, 35, 30] WHERE name = 'Muzeum';			-- 36
+UPDATE Stops SET conns = ARRAY[31] WHERE name = 'Stawy';			-- 37
+
+UPDATE Stops SET times = ARRAY[3] WHERE name = 'Grzybowa';		-- 1
+UPDATE Stops SET times = ARRAY[3, 3] WHERE name = 'Kamienna';		-- 2
+UPDATE Stops SET times = ARRAY[3, 2] WHERE name = 'Plac Nowy';	-- 3
+UPDATE Stops SET times = ARRAY[2, 4, 3] WHERE name = 'Stary Dwor';-- 4
+UPDATE Stops SET times = ARRAY[4, 4] WHERE name = 'AGH';			-- 5
+UPDATE Stops SET times = ARRAY[4, 2, 3] WHERE name = 'Nowy Dwor';-- 6
+UPDATE Stops SET times = ARRAY[2, 3] WHERE name = '11. Listopada';-- 7
+UPDATE Stops SET times = ARRAY[3, 2, 3] WHERE name = 'Zapomniana';-- 8
+UPDATE Stops SET times = ARRAY[2, 4] WHERE name = 'Czerwone Maki';-- 9
+UPDATE Stops SET times = ARRAY[4, 12] WHERE name = 'Granica';		-- 10
+UPDATE Stops SET times = ARRAY[12] WHERE name = 'Lotnisko'; 		-- 11
+UPDATE Stops SET times = ARRAY[3, 3] WHERE name = 'Borsucza';	-- 12
+UPDATE Stops SET times = ARRAY[3, 2] WHERE name = 'Badylowa';	-- 13
+UPDATE Stops SET times = ARRAY[2, 3] WHERE name = 'Rog';		-- 14
+UPDATE Stops SET times = ARRAY[3, 3, 4] WHERE name = 'Teatr';	-- 15
+UPDATE Stops SET times = ARRAY[4, 3, 4] WHERE name = 'Uniwersytet';-- 16
+UPDATE Stops SET times = ARRAY[4, 2, 3] WHERE name = 'Poczta';	-- 17
+UPDATE Stops SET times = ARRAY[2, 3] WHERE name = 'Wolowa';		-- 18
+UPDATE Stops SET times = ARRAY[3, 2, 2] WHERE name = 'Krakowska';-- 19
+UPDATE Stops SET times = ARRAY[2] WHERE name = 'Nocna';			-- 20
+UPDATE Stops SET times = ARRAY[3] WHERE name = 'Ostra Brama';	-- 21
+UPDATE Stops SET times = ARRAY[3, 2, 4] WHERE name = 'Dworzec';-- 22
+UPDATE Stops SET times = ARRAY[3, 3] WHERE name = 'Standardowa';-- 23
+UPDATE Stops SET times = ARRAY[4, 3, 4] WHERE name = 'Dluga';	-- 24
+UPDATE Stops SET times = ARRAY[3, 3, 3] WHERE name = 'Opera';	-- 25
+UPDATE Stops SET times = ARRAY[3, 2] WHERE name = 'Brzozowa';	-- 26
+UPDATE Stops SET times = ARRAY[4] WHERE name = 'Ostatnia';		-- 27
+UPDATE Stops SET times = ARRAY[4, 3] WHERE name = 'Stadion';	-- 28
+UPDATE Stops SET times = ARRAY[3, 3] WHERE name = 'Rozana';		-- 29
+UPDATE Stops SET times = ARRAY[4, 3, 2] WHERE name = 'Bystra';	-- 30
+UPDATE Stops SET times = ARRAY[3, 3, 2] WHERE name = 'Sklep';	-- 31
+UPDATE Stops SET times = ARRAY[3, 4] WHERE name = 'Odnogowa';	-- 32
+UPDATE Stops SET times = ARRAY[4] WHERE name = 'Nowe Osiedle';	-- 33
+UPDATE Stops SET times = ARRAY[4, 3, 4] WHERE name = 'Stare Osiedla';-- 34
+UPDATE Stops SET times = ARRAY[4, 4] WHERE name = 'Starorzeczna';		-- 35
+UPDATE Stops SET times = ARRAY[3, 4, 4] WHERE name = 'Muzeum';			-- 36
+UPDATE Stops SET times = ARRAY[2] WHERE name = 'Stawy';			-- 37
