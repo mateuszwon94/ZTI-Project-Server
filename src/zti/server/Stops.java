@@ -1,5 +1,6 @@
 package zti.server;
 
+import java.util.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Array;
@@ -27,21 +28,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import zti.server.util.*;
+import zti.server.data.*;
 import zti.server.sql.*;
 
 @WebServlet("/Stops")
 public class Stops extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
-	private final String ROOT 	= "stops";
-	private final String STOP 	= "stop";
-	private final String ID 	= "id";
-	private final String NAME 	= "name";
-	private final String NZ 	= "nz";
-	private final String LOC_X 	= "loc_x";
-	private final String LOC_Y 	= "loc_y";
-	private final String CONNS 	= "conns";
-	private final String CONN 	= "conn";
 
 	public Stops() {
 		super();
@@ -59,35 +51,17 @@ public class Stops extends HttpServlet {
 		response.setContentType("text/xml");
 		PrintWriter out = response.getWriter();
 		
-		ResultSet rs = null;
-		try {
-			rs = DataBaseConnection.createStatement().executeQuery(DataBaseConnection.GET_ALL_STOPS);
-
+		try {			
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-			// root elements
 			Document doc = docBuilder.newDocument();
-			Element rootElement = doc.createElement(ROOT);
-			rootElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-			rootElement.setAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
+			Element rootElement = doc.createElement(Constants.STOPS);
+			rootElement.setAttribute(Constants.XSI, Constants.XSI_VAL);
+			rootElement.setAttribute(Constants.XSD, Constants.XSD_VAL);
 			
-			while ( rs.next() ) {
-				Element stopElement = doc.createElement(STOP);
-				
-				stopElement.setAttribute(ID, Integer.toString(rs.getInt(ID)));
-				stopElement.appendChild(Util.createElement(doc, NAME, rs.getString(NAME)));
-				stopElement.appendChild(Util.createElement(doc, NZ, Boolean.toString(rs.getBoolean(NZ))));
-				stopElement.appendChild(Util.createElement(doc, LOC_X, Float.toString(rs.getFloat(LOC_X))));
-				stopElement.appendChild(Util.createElement(doc, LOC_Y, Float.toString(rs.getFloat(LOC_Y))));
-				
-				Element connsElement = doc.createElement(CONNS);
-				for (Integer connection : (Integer[])(rs.getArray(CONNS).getArray())) {
-					connsElement.appendChild(Util.createElement(doc, CONN, connection.toString()));
-				}
-				stopElement.appendChild(connsElement);
-				
-				rootElement.appendChild(stopElement);
+			for ( Stop stop : DataBaseConnection.getStopList() ) {
+				rootElement.appendChild(stop.toXml(doc));
 			}
 			
 			doc.appendChild(rootElement);
@@ -96,12 +70,6 @@ public class Stops extends HttpServlet {
 		} catch ( Exception e ) {
 			response.sendError(HttpServletResponse.SC_EXPECTATION_FAILED, e.toString());
 			Util.printException(e, out);
-		} finally {
-			try {
-				if (rs != null) rs.close();
-			} catch ( Exception e ) {
-				Util.printException(e, out);
-			}
 		}
 	}
 	
