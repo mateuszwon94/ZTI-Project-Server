@@ -52,6 +52,9 @@ public class Stops extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		
 		try {			
+			JPAConnection baza = new JPAConnection("PU_Postgresql");
+			List<Stop> stops = baza.getStopList();
+			
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
@@ -60,7 +63,7 @@ public class Stops extends HttpServlet {
 			rootElement.setAttribute(Constants.XSI, Constants.XSI_VAL);
 			rootElement.setAttribute(Constants.XSD, Constants.XSD_VAL);
 			
-			for ( Stop stop : DataBaseConnection.getStopList() ) {
+			for ( Stop stop : stops ) {
 				rootElement.appendChild(stop.toXml(doc));
 			}
 			

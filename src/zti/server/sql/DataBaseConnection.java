@@ -23,11 +23,13 @@ public final class DataBaseConnection {
 	private static final String username = "xggfrvfc";
 	private static final String password = "q1gFyHQUPS0ZkVzS9nqmlshn0CzDNGgC";
 
+	@Resource(name = "jdbc/postgresql")
+	private static DataSource db;
 	private static Connection conn = null;
 	
 	public static Statement createStatement() throws SQLException {
 		if (conn == null) {
-			conn = DriverManager.getConnection(url, username, password);
+			conn = db.getConnection();
 		}
 		return conn.createStatement();
 	}

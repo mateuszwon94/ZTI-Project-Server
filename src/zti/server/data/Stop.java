@@ -9,6 +9,8 @@ import org.w3c.dom.Element;
 import zti.server.sql.DataBaseConnection;
 import zti.server.util.Util;
 
+@Entity
+@NamedQuery(name="findAll", query="SELECT s FROM Stop s ORDER BY s.id")
 public class Stop implements Serializable {
 	public Stop() {	}
 
