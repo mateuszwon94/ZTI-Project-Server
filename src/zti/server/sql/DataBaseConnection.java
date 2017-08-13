@@ -25,8 +25,9 @@ public final class DataBaseConnection {
 
 	private static Connection conn = null;
 	
-	public static Statement createStatement() throws SQLException {
+	public static Statement createStatement() throws SQLException, ClassNotFoundException {
 		if (conn == null) {
+			Class.forName("org.postgresql.Driver");
 			conn = DriverManager.getConnection(url, username, password);
 		}
 		return conn.createStatement();
@@ -50,7 +51,7 @@ public final class DataBaseConnection {
 					list.add(stop);
 				}
 				rset.close();
-		} catch (SQLException ex) {
+		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 		}
 		
