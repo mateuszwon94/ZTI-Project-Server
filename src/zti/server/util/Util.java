@@ -2,6 +2,7 @@ package zti.server.util;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.*;
 
 import javax.xml.transform.Transformer;
@@ -42,7 +43,7 @@ public final class Util {
 		transformer.transform(source, result);
 	}
 
-	public static List<Stop> generateRoute(Integer fromID, Integer toID) throws PathNotFoundException {
+	public static List<Stop> generateRoute(Integer fromID, Integer toID) throws PathNotFoundException, ClassNotFoundException, SQLException {
 		if (fromID == null ) throw new NullPointerException("fromID");
 		else if (toID == null) throw new NullPointerException("toID");
 		
