@@ -51,7 +51,7 @@ public class Lines extends HttpServlet {
 		
 		Integer reqNum = null;
 		try {
-			reqNum = Integer.valueOf(request.getParameterValues(Constants.NUM)[0]);
+			reqNum = Integer.valueOf(request.getParameterValues(Constants.LINE)[0]);
 		} catch (NullPointerException ex) { }
 		
 		try {			
@@ -62,18 +62,16 @@ public class Lines extends HttpServlet {
 			Element rootElement = null;
 			if (reqNum == null) {
 				rootElement = doc.createElement(Constants.LINES);
-				rootElement.setAttribute(Constants.XSI, Constants.XSI_VAL);
-				rootElement.setAttribute(Constants.XSD, Constants.XSD_VAL);
 				
 				for ( Map.Entry<Integer, Line> lineEntry : DataBaseConnection.getLineMap().entrySet() ) {
 					rootElement.appendChild(lineEntry.getValue().toXml(doc));
 				}
 			} else {
 				rootElement = DataBaseConnection.getLine(reqNum).toXml(doc);
-				rootElement.setAttribute(Constants.XSI, Constants.XSI_VAL);
-				rootElement.setAttribute(Constants.XSD, Constants.XSD_VAL);
 			}
-			
+
+			rootElement.setAttribute(Constants.XSI, Constants.XSI_VAL);
+			rootElement.setAttribute(Constants.XSD, Constants.XSD_VAL);
 			doc.appendChild(rootElement);
 			Util.writeXmlToPrintWriter(doc, out);
 		} catch ( Exception e ) {
@@ -84,7 +82,6 @@ public class Lines extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

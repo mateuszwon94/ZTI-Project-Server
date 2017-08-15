@@ -36,7 +36,7 @@ public class Stops extends HttpServlet {
 	public Stops() {
 		super();
 	}
-	
+
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
@@ -45,34 +45,43 @@ public class Stops extends HttpServlet {
 			throws ServletException, IOException {
 		response.setContentType("text/xml");
 		PrintWriter out = response.getWriter();
-		
-		try {			
+
+		Integer reqNum = null;
+		try {
+			reqNum = Integer.valueOf(request.getParameterValues(Constants.STOP)[0]);
+		} catch (NullPointerException ex) { }
+
+		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
 			Document doc = docBuilder.newDocument();
-			Element rootElement = doc.createElement(Constants.STOPS);
+			Element rootElement = null;
+			if (reqNum == null) {
+				rootElement = doc.createElement(Constants.STOPS);
+
+				for (Map.Entry<Integer, Stop> stopEntry : DataBaseConnection.getStopMap().entrySet()) {
+					rootElement.appendChild(stopEntry.getValue().toXml(doc));
+				}
+			} else {
+				rootElement = DataBaseConnection.getStop(reqNum).toXml(doc);
+			}
+
 			rootElement.setAttribute(Constants.XSI, Constants.XSI_VAL);
 			rootElement.setAttribute(Constants.XSD, Constants.XSD_VAL);
-			
-			for ( Map.Entry<Integer, Stop> stopEntry : DataBaseConnection.getStopMap().entrySet() ) {
-				rootElement.appendChild(stopEntry.getValue().toXml(doc));
-			}
-			
 			doc.appendChild(rootElement);
-			
+
 			Util.writeXmlToPrintWriter(doc, out);
-		} catch ( Exception e ) {
+		} catch (Exception e) {
 			response.sendError(HttpServletResponse.SC_EXPECTATION_FAILED, e.toString());
 			Util.printException(e, out);
 		}
 	}
-	
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
-	
+
 	private static final long serialVersionUID = 1L;
 }

@@ -24,7 +24,6 @@ public final class Constants {
 	public static final String LAST 		= "last";
 	public static final String FROM 		= "from";
 	public static final String TO			= "to";
-	public static final String NUM			= "num";
 	public static final String XSI			= "xmlns:xsi";
 	public static final String XSD			= "xmlns:xsd";
 	public static final String XSI_VAL		= "http://www.w3.org/2001/XMLSchema-instance";
@@ -33,6 +32,7 @@ public final class Constants {
 	public final class Querys {
 		public static final String GET_ALL_STOPS = "SELECT * FROM public.stops ORDER BY id";
 		public static final String GET_ALL_LINES = "SELECT * FROM public.lines ORDER BY number";
-		public static final String GET_SINGLE_LINES = "SELECT * FROM public.lines WHERE number = {$0};";
+		public static final String GET_SINGLE_LINE = "SELECT * FROM public.lines WHERE number = {$0};";
+		public static final String GET_SINGLE_STOP = "SELECT * FROM public.stops WHERE id = {$0};";
 	}
 }

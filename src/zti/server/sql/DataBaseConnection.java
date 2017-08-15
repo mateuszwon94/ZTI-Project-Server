@@ -25,7 +25,7 @@ public final class DataBaseConnection {
 
 	public static Map<Integer, Stop> getStopMap() {
 		Map<Integer, Stop> stops = new HashMap<Integer, Stop>();
-		
+
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rset = null;
@@ -41,8 +41,10 @@ public final class DataBaseConnection {
 				stop.setNz(rset.getBoolean(Constants.NZ));
 				stop.setLocX(rset.getFloat(Constants.LOC_X));
 				stop.setLocY(rset.getFloat(Constants.LOC_Y));
-				stop.setConns(new ArrayList<Integer>(Arrays.asList((Integer[]) rset.getArray(Constants.CONNS).getArray())));
-				stop.setTimes(new ArrayList<Integer>(Arrays.asList((Integer[]) rset.getArray(Constants.TIMES).getArray())));
+				stop.setConns(
+						new ArrayList<Integer>(Arrays.asList((Integer[]) rset.getArray(Constants.CONNS).getArray())));
+				stop.setTimes(
+						new ArrayList<Integer>(Arrays.asList((Integer[]) rset.getArray(Constants.TIMES).getArray())));
 
 				stops.put(stop.getId(), stop);
 			}
@@ -83,7 +85,8 @@ public final class DataBaseConnection {
 					line.setVariants(Arrays.asList((String[]) (rset.getArray(Constants.VARIANTS).getArray())));
 				} catch (NullPointerException ex) {
 				}
-				line.setRoute(new ArrayList<Integer>(Arrays.asList((Integer[]) (rset.getArray(Constants.ROUTE).getArray()))));
+				line.setRoute(
+						new ArrayList<Integer>(Arrays.asList((Integer[]) (rset.getArray(Constants.ROUTE).getArray()))));
 				line.setFPeak(rset.getInt(Constants.F_PEAK));
 				line.setFNotPeak(rset.getInt(Constants.F_NOT_PEAK));
 				line.setFirst(rset.getTime(Constants.FIRST));
@@ -109,10 +112,10 @@ public final class DataBaseConnection {
 
 		return lines;
 	}
-	
+
 	public static Line getLine(Integer number) {
 		Line line = null;
-		
+
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rset = null;
@@ -120,15 +123,16 @@ public final class DataBaseConnection {
 			Class.forName("org.postgresql.Driver");
 			conn = DriverManager.getConnection(url, username, password);
 			stmt = conn.createStatement();
-			rset = stmt.executeQuery(Constants.Querys.GET_SINGLE_LINES.replace("{$0}", number.toString()));
-			
+			rset = stmt.executeQuery(Constants.Querys.GET_SINGLE_LINE.replace("{$0}", number.toString()));
+
 			rset.next();
 			line = new Line();
 			line.setNumber(rset.getInt(Constants.NUMBER));
 			try {
 				line.setVariants(Arrays.asList((String[]) (rset.getArray(Constants.VARIANTS).getArray())));
 			} catch (NullPointerException ex) { }
-			line.setRoute(new ArrayList<Integer>(Arrays.asList((Integer[]) (rset.getArray(Constants.ROUTE).getArray()))));
+			line.setRoute(
+					new ArrayList<Integer>(Arrays.asList((Integer[]) (rset.getArray(Constants.ROUTE).getArray()))));
 			line.setFPeak(rset.getInt(Constants.F_PEAK));
 			line.setFNotPeak(rset.getInt(Constants.F_NOT_PEAK));
 			line.setFirst(rset.getTime(Constants.FIRST));
@@ -147,7 +151,46 @@ public final class DataBaseConnection {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return line;
+	}
+
+	public static Stop getStop(Integer stopId) {
+		Stop stop = null;
+
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rset = null;
+		try {
+			Class.forName("org.postgresql.Driver");
+			conn = DriverManager.getConnection(url, username, password);
+			stmt = conn.createStatement();
+			rset = stmt.executeQuery(Constants.Querys.GET_SINGLE_STOP.replace("{$0}", stopId.toString()));
+			
+			rset.next();
+			stop = new Stop();
+			stop.setId(rset.getInt(Constants.ID));
+			stop.setName(rset.getString(Constants.NAME));
+			stop.setNz(rset.getBoolean(Constants.NZ));
+			stop.setLocX(rset.getFloat(Constants.LOC_X));
+			stop.setLocY(rset.getFloat(Constants.LOC_Y));
+			stop.setConns(new ArrayList<Integer>(Arrays.asList((Integer[]) rset.getArray(Constants.CONNS).getArray())));
+			stop.setTimes(new ArrayList<Integer>(Arrays.asList((Integer[]) rset.getArray(Constants.TIMES).getArray())));
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		} finally {
+			try {
+				if (rset != null)
+					rset.close();
+				if (stmt != null)
+					stmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return stop;
 	}
 }
