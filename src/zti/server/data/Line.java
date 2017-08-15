@@ -1,6 +1,7 @@
 package zti.server.data;
 
 import java.sql.Time;
+import java.util.List;
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -14,7 +15,7 @@ import zti.server.util.Util;
 public class Line implements Serializable {
 	public Line() { }
 	
-	public Line(Integer number, String[] variants, Integer[] route, Integer f_peak, Integer f_not_peak, Time first, Time last) {
+	public Line(Integer number, List<String> variants, List<Integer> route, Integer f_peak, Integer f_not_peak, Time first, Time last) {
 		this.number = number;
 		this.variants = variants;
 		this.route = route;
@@ -27,11 +28,11 @@ public class Line implements Serializable {
 	public Integer getNumber() { return number; }
 	public void setNumber(Integer number) { this.number = number; }
 	
-	public String[] getVariants() { return variants; }
-	public void setVariants(String[] variants) { this.variants = variants; }
+	public List<String> getVariants() { return variants; }
+	public void setVariants(List<String> variants) { this.variants = variants; }
 	
-	public Integer[] getRoute() { return route; }
-	public void setRoute(Integer[] route) { this.route = route; }
+	public List<Integer> getRoute() { return route; }
+	public void setRoute(List<Integer> route) { this.route = route; }
 	
 	public Integer getFPeak() { return f_peak; }
 	public void setFPeak(Integer f_peak) { this.f_peak = f_peak; }
@@ -69,8 +70,8 @@ public class Line implements Serializable {
 	}
 	
 	private Integer number;
-	private String[] variants;
-	private Integer[] route;
+	private List<String> variants;
+	private List<Integer> route;
 	private Integer f_peak;
 	private Integer f_not_peak;
 	private Time first;

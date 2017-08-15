@@ -1,6 +1,8 @@
 package zti.server.data;
 
 import java.io.Serializable;
+import java.util.List;
+
 import javax.persistence.*;
 
 import org.w3c.dom.Document;
@@ -12,7 +14,7 @@ import zti.server.util.Util;
 public class Stop implements Serializable {
 	public Stop() {	}
 
-	public Stop(Integer id, String name, Boolean nz, Float loc_x, Float loc_y, Integer conns[], Integer times[]) {
+	public Stop(Integer id, String name, Boolean nz, Float loc_x, Float loc_y, List<Integer> conns, List<Integer> times) {
 		this.id = id;
 		this.name = name;
 		this.nz = nz;
@@ -39,11 +41,11 @@ public class Stop implements Serializable {
 	public Float getLocY() { return loc_y; }
 	public void setLocY(Float loc_y) { this.loc_y = loc_y; }
 	
-	public Integer[] getConns() { return conns; }
-	public void setConns(Integer conns[]) { this.conns = conns; }
+	public List<Integer> getConns() { return conns; }
+	public void setConns(List<Integer> conns) { this.conns = conns; }
 	
-	public Integer[] getTimes() { return times; }
-	public void setTimes(Integer times[]) { this.times = times; }
+	public List<Integer> getTimes() { return times; }
+	public void setTimes(List<Integer> times) { this.times = times; }
 	
 	public Element toXml(Document doc) {
 		Element stopElement = doc.createElement(Constants.STOP);
@@ -68,8 +70,8 @@ public class Stop implements Serializable {
 	private Boolean nz;
 	private Float loc_x;
 	private Float loc_y;
-	private Integer conns[];
-	private Integer times[];
+	private List<Integer> conns;
+	private List<Integer> times;
 
 	private static final long serialVersionUID = 1L;
 }

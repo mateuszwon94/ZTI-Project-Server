@@ -33,8 +33,6 @@ import zti.server.sql.*;
 
 @WebServlet("/Stops")
 public class Stops extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-
 	public Stops() {
 		super();
 	}
@@ -45,9 +43,6 @@ public class Stops extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		// response.getWriter().append("Served at: ").append(request.getContextPath());
-
 		response.setContentType("text/xml");
 		PrintWriter out = response.getWriter();
 		
@@ -60,8 +55,8 @@ public class Stops extends HttpServlet {
 			rootElement.setAttribute(Constants.XSI, Constants.XSI_VAL);
 			rootElement.setAttribute(Constants.XSD, Constants.XSD_VAL);
 			
-			for ( Stop stop : DataBaseConnection.getStopList() ) {
-				rootElement.appendChild(stop.toXml(doc));
+			for ( Map.Entry<Integer, Stop> stopEntry : DataBaseConnection.getStopMap().entrySet() ) {
+				rootElement.appendChild(stopEntry.getValue().toXml(doc));
 			}
 			
 			doc.appendChild(rootElement);
@@ -79,5 +74,5 @@ public class Stops extends HttpServlet {
 		doGet(request, response);
 	}
 	
-	
+	private static final long serialVersionUID = 1L;
 }
