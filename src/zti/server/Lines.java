@@ -58,8 +58,8 @@ public class Lines extends HttpServlet {
 			rootElement.setAttribute(Constants.XSI, Constants.XSI_VAL);
 			rootElement.setAttribute(Constants.XSD, Constants.XSD_VAL);
 			
-			for ( Line line : DataBaseConnection.getLineList() ) {
-				rootElement.appendChild(line.toXml(doc));
+			for ( Map.Entry<Integer, Line> lineEntry : DataBaseConnection.getLineMap().entrySet() ) {
+				rootElement.appendChild(lineEntry.getValue().toXml(doc));
 			}
 			
 			doc.appendChild(rootElement);

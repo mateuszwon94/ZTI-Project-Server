@@ -23,12 +23,7 @@ public final class DataBaseConnection {
 	private static final String username = "xggfrvfc";
 	private static final String password = "q1gFyHQUPS0ZkVzS9nqmlshn0CzDNGgC";
 
-	private static Map<Integer, Stop> stops = null;
-
 	public static Map<Integer, Stop> getStopMap() {
-		/*if (stops != null)
-			return stops;*/
-
 		Map<Integer, Stop> stops = new HashMap<Integer, Stop>();
 		
 		Connection conn = null;
@@ -46,8 +41,8 @@ public final class DataBaseConnection {
 				stop.setNz(rset.getBoolean(Constants.NZ));
 				stop.setLocX(rset.getFloat(Constants.LOC_X));
 				stop.setLocY(rset.getFloat(Constants.LOC_Y));
-				stop.setConns(Arrays.asList((Integer[]) rset.getArray(Constants.CONNS).getArray()));
-				stop.setTimes(Arrays.asList((Integer[]) rset.getArray(Constants.TIMES).getArray()));
+				stop.setConns(new ArrayList<Integer>(Arrays.asList((Integer[]) rset.getArray(Constants.CONNS).getArray())));
+				stop.setTimes(new ArrayList<Integer>(Arrays.asList((Integer[]) rset.getArray(Constants.TIMES).getArray())));
 
 				stops.put(stop.getId(), stop);
 			}
@@ -70,8 +65,8 @@ public final class DataBaseConnection {
 		return stops;
 	}
 
-	public static List<Line> getLineList() {
-		List<Line> list = new ArrayList<Line>();
+	public static Map<Integer, Line> getLineMap() {
+		Map<Integer, Line> lines = new HashMap<Integer, Line>();
 
 		Connection conn = null;
 		Statement stmt = null;
@@ -88,13 +83,13 @@ public final class DataBaseConnection {
 					line.setVariants(Arrays.asList((String[]) (rset.getArray(Constants.VARIANTS).getArray())));
 				} catch (NullPointerException ex) {
 				}
-				line.setRoute(Arrays.asList((Integer[]) (rset.getArray(Constants.ROUTE).getArray())));
+				line.setRoute(new ArrayList<Integer>(Arrays.asList((Integer[]) (rset.getArray(Constants.ROUTE).getArray()))));
 				line.setFPeak(rset.getInt(Constants.F_PEAK));
 				line.setFNotPeak(rset.getInt(Constants.F_NOT_PEAK));
 				line.setFirst(rset.getTime(Constants.FIRST));
 				line.setLast(rset.getTime(Constants.LAST));
 
-				list.add(line);
+				lines.put(line.getNumber(), line);
 			}
 			rset.close();
 		} catch (Exception ex) {
@@ -112,6 +107,6 @@ public final class DataBaseConnection {
 			}
 		}
 
-		return list;
+		return lines;
 	}
 }
