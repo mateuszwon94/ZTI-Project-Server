@@ -48,8 +48,8 @@ public class SearchRoute extends HttpServlet {
 		response.setContentType("text/xml");
 		PrintWriter out = response.getWriter();
 		
-		String from = request.getParameterValues(Constants.FROM)[0];
-		String to = request.getParameterValues(Constants.TO)[0];
+		Integer from = Integer.valueOf(request.getParameterValues(Constants.FROM)[0]);
+		Integer to = Integer.valueOf(request.getParameterValues(Constants.TO)[0]);
 		
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -60,18 +60,18 @@ public class SearchRoute extends HttpServlet {
 			rootElement.setAttribute(Constants.XSI, Constants.XSI_VAL);
 			rootElement.setAttribute(Constants.XSD, Constants.XSD_VAL);
 			
-			for (int i = 1; i <= 11; ++i) {
+			for (Stop stop : Util.generateRoute(from, to)) {
 				Element stopElement = doc.createElement(Constants.STOP);
-				stopElement.setAttribute(Constants.ID, Integer.toString(i));
+				stopElement.setAttribute(Constants.ID, stop.getId().toString());
 				rootElement.appendChild(stopElement);
 			}
-			
 			doc.appendChild(rootElement);
 			
 			Util.writeXmlToPrintWriter(doc, out);
 		} catch ( Exception e ) {
 			response.sendError(HttpServletResponse.SC_EXPECTATION_FAILED, e.toString());
 			Util.printException(e, out);
+			throw new RuntimeException(e);
 		} 
 	}
 
