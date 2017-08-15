@@ -109,4 +109,45 @@ public final class DataBaseConnection {
 
 		return lines;
 	}
+	
+	public static Line getLine(Integer number) {
+		Line line = null;
+		
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rset = null;
+		try {
+			Class.forName("org.postgresql.Driver");
+			conn = DriverManager.getConnection(url, username, password);
+			stmt = conn.createStatement();
+			rset = stmt.executeQuery(Constants.Querys.GET_SINGLE_LINES.replace("{$0}", number.toString()));
+			
+			rset.next();
+			line = new Line();
+			line.setNumber(rset.getInt(Constants.NUMBER));
+			try {
+				line.setVariants(Arrays.asList((String[]) (rset.getArray(Constants.VARIANTS).getArray())));
+			} catch (NullPointerException ex) { }
+			line.setRoute(new ArrayList<Integer>(Arrays.asList((Integer[]) (rset.getArray(Constants.ROUTE).getArray()))));
+			line.setFPeak(rset.getInt(Constants.F_PEAK));
+			line.setFNotPeak(rset.getInt(Constants.F_NOT_PEAK));
+			line.setFirst(rset.getTime(Constants.FIRST));
+			line.setLast(rset.getTime(Constants.LAST));
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+		} finally {
+			try {
+				if (rset != null)
+					rset.close();
+				if (stmt != null)
+					stmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return line;
+	}
 }

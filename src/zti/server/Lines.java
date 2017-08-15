@@ -49,21 +49,32 @@ public class Lines extends HttpServlet {
 		response.setContentType("text/xml");
 		PrintWriter out = response.getWriter();
 		
+		Integer reqNum = null;
+		try {
+			reqNum = Integer.valueOf(request.getParameterValues(Constants.NUM)[0]);
+		} catch (NullPointerException ex) { }
+		
 		try {			
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
 			Document doc = docBuilder.newDocument();
-			Element rootElement = doc.createElement(Constants.LINES);
-			rootElement.setAttribute(Constants.XSI, Constants.XSI_VAL);
-			rootElement.setAttribute(Constants.XSD, Constants.XSD_VAL);
-			
-			for ( Map.Entry<Integer, Line> lineEntry : DataBaseConnection.getLineMap().entrySet() ) {
-				rootElement.appendChild(lineEntry.getValue().toXml(doc));
+			Element rootElement = null;
+			if (reqNum == null) {
+				rootElement = doc.createElement(Constants.LINES);
+				rootElement.setAttribute(Constants.XSI, Constants.XSI_VAL);
+				rootElement.setAttribute(Constants.XSD, Constants.XSD_VAL);
+				
+				for ( Map.Entry<Integer, Line> lineEntry : DataBaseConnection.getLineMap().entrySet() ) {
+					rootElement.appendChild(lineEntry.getValue().toXml(doc));
+				}
+			} else {
+				rootElement = DataBaseConnection.getLine(reqNum).toXml(doc);
+				rootElement.setAttribute(Constants.XSI, Constants.XSI_VAL);
+				rootElement.setAttribute(Constants.XSD, Constants.XSD_VAL);
 			}
 			
 			doc.appendChild(rootElement);
-			
 			Util.writeXmlToPrintWriter(doc, out);
 		} catch ( Exception e ) {
 			response.sendError(HttpServletResponse.SC_EXPECTATION_FAILED, e.toString());
