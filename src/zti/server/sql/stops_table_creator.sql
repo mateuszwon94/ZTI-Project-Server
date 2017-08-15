@@ -67,10 +67,10 @@ UPDATE Stops SET conns = ARRAY[15, 6, 17] WHERE name = 'Uniwersytet';-- 16
 UPDATE Stops SET conns = ARRAY[16, 18, 23] WHERE name = 'Poczta';	-- 17
 UPDATE Stops SET conns = ARRAY[17, 19] WHERE name = 'Wolowa';		-- 18
 UPDATE Stops SET conns = ARRAY[18, 20, 13] WHERE name = 'Krakowska';-- 19
-UPDATE Stops SET conns = ARRAY[20] WHERE name = 'Nocna';			-- 20
+UPDATE Stops SET conns = ARRAY[19] WHERE name = 'Nocna';			-- 20
 UPDATE Stops SET conns = ARRAY[22] WHERE name = 'Ostra Brama';	-- 21
 UPDATE Stops SET conns = ARRAY[21, 14, 24] WHERE name = 'Dworzec';-- 22
-UPDATE Stops SET conns = ARRAY[17, 25] WHERE name = 'Standardowa';-- 23
+UPDATE Stops SET conns = ARRAY[17, 25, 26] WHERE name = 'Standardowa';-- 23
 UPDATE Stops SET conns = ARRAY[22, 25, 28] WHERE name = 'Dluga';	-- 24
 UPDATE Stops SET conns = ARRAY[24, 29, 23] WHERE name = 'Opera';	-- 25
 UPDATE Stops SET conns = ARRAY[23, 30] WHERE name = 'Brzozowa';	-- 26
@@ -108,7 +108,7 @@ UPDATE Stops SET times = ARRAY[3, 2, 2] WHERE name = 'Krakowska';-- 19
 UPDATE Stops SET times = ARRAY[2] WHERE name = 'Nocna';			-- 20
 UPDATE Stops SET times = ARRAY[3] WHERE name = 'Ostra Brama';	-- 21
 UPDATE Stops SET times = ARRAY[3, 2, 4] WHERE name = 'Dworzec';-- 22
-UPDATE Stops SET times = ARRAY[3, 3] WHERE name = 'Standardowa';-- 23
+UPDATE Stops SET times = ARRAY[3, 3, 3] WHERE name = 'Standardowa';-- 23
 UPDATE Stops SET times = ARRAY[4, 3, 4] WHERE name = 'Dluga';	-- 24
 UPDATE Stops SET times = ARRAY[3, 3, 3] WHERE name = 'Opera';	-- 25
 UPDATE Stops SET times = ARRAY[3, 2] WHERE name = 'Brzozowa';	-- 26
