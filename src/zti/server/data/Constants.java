@@ -1,5 +1,7 @@
 package zti.server.data;
 
+import java.time.LocalTime;
+
 public final class Constants {
 	public static final String STOPS 		= "stops";
 	public static final String STOP 		= "stop";
@@ -11,6 +13,7 @@ public final class Constants {
 	public static final String CONNS 		= "conns";
 	public static final String CONN 		= "conn";
 	public static final String TIMES 		= "times";
+	public static final String TIME 		= "time";
 	public static final String LINES 		= "lines";
 	public static final String LINE 		= "line";
 	public static final String NUMBER 		= "number";
@@ -22,12 +25,19 @@ public final class Constants {
 	public static final String F_NOT_PEAK 	= "f_not_peak";
 	public static final String FIRST 		= "first";
 	public static final String LAST 		= "last";
+	public static final String SCHEDULES 	= "schedules";
+	public static final String SCHEDULE 	= "schedule";
 	public static final String FROM 		= "from";
 	public static final String TO			= "to";
 	public static final String XSI			= "xmlns:xsi";
 	public static final String XSD			= "xmlns:xsd";
 	public static final String XSI_VAL		= "http://www.w3.org/2001/XMLSchema-instance";
 	public static final String XSD_VAL		= "http://www.w3.org/2001/XMLSchema";
+	
+	public static final LocalTime MORNING_PEAK_START = LocalTime.of(7, 30);
+	public static final LocalTime MORNING_PEAK_END = LocalTime.of(10, 00);
+	public static final LocalTime AFTERNOON_PEAK_START = LocalTime.of(14, 30);
+	public static final LocalTime AFTERNOON_PEAK_END = LocalTime.of(17, 30);
 	
 	public final class Querys {
 		public static final String GET_ALL_STOPS = "SELECT * FROM public.stops ORDER BY id";

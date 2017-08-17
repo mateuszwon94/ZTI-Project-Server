@@ -3,6 +3,8 @@ package zti.server.util;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.time.LocalTime;
 import java.util.*;
 
 import javax.xml.transform.Transformer;
@@ -43,84 +45,86 @@ public final class Util {
 		transformer.transform(source, result);
 	}
 
-	public static List<Stop> generateRoute(Integer fromID, Integer toID) throws PathNotFoundException, ClassNotFoundException, SQLException {
-		if (fromID == null ) throw new NullPointerException("fromID");
-		else if (toID == null) throw new NullPointerException("toID");
-		
-		try (PrintWriter writer = new PrintWriter("log.txt", "UTF-8")) {
-			Map<Integer, Stop> stopMap = DataBaseConnection.getStopMap();
-			Stop from = stopMap.getOrDefault(fromID, null);
-			Stop to = stopMap.getOrDefault(toID, null);
-			if (from == null )throw new NullPointerException("from");
-			else if (to == null) throw new NullPointerException("to");
-			
-			writer.println("from " + from.getId() + " to "+ to.getId());
-			
-			if (stopMap.get(from.getId()).getConns().contains(to.getId())) 
-				return Arrays.asList(from, to);
-			
-			List<Node> openList = new ArrayList<Node>(Arrays.asList(new Node(from)));
-			List<Node> closeList = new ArrayList<Node>(stopMap.size());
-			
-			printList(writer, openList, "openList");
-			printList(writer, closeList, "closeList");
-			
-			Node endNode = null;
-			while (openList.size() != 0) {
-				Node current = openList.get(0);
-				openList.remove(0);
-				closeList.add(current);
-				
-				writer.println("Current node is " + current.stop.getId());
-				printList(writer, openList, "openList");
-				printList(writer, closeList, "closeList");
-				
-				if ( current.stop == to ) { // znaleziono pole do którego dążyliśmy
-					endNode = current;
-					writer.println("EndNode was found!");
-				} else if ( endNode != null && minValueCostFromStartFromOpenList(openList) < endNode.costFromStart ) {
-					writer.println("Reconstructing path!");
-					return reconstructPath(endNode);
-				}
-				
-				for (int i = 0; i < current.stop.getConns().size(); ++i) {
-					Node newNode = new Node(stopMap.get(current.stop.getConns().get(i)), current);
-					newNode.costFromStart = current.costFromStart + distance(current.stop, newNode.stop);
-					newNode.costToEnd = distance(newNode.stop, to);
-					
-					writer.println("Node " + newNode.stop.getId().toString() + " in connection with " + current.stop.getId().toString());
-					
-					if ( closeList.contains(newNode) ) {
-						writer.println("closeList.contains(newNode)");
-						Node oldNode = closeList.get(closeList.indexOf(newNode));
-						if ( newNode.costFromStart < oldNode.costFromStart ) {
-							writer.println("newNode.costFromStart (" + newNode.costFromStart + ") < (" + oldNode.costFromStart + ") oldNode.costFromStart");
-							closeList.remove(oldNode);
-							openList.add(newNode);
-						}
-					} else if ( openList.contains(newNode) ) {
-						writer.println("openList.contains(newNode)");
-						Node oldNode = openList.get(openList.indexOf(newNode));
-						if ( newNode.costFromStart < oldNode.costFromStart ) {
-							writer.println("newNode.costFromStart (" + newNode.costFromStart + ") < (" + oldNode.costFromStart + ") oldNode.costFromStart");
-							oldNode.costFromStart = newNode.costFromStart;
-							oldNode.parent = newNode.parent;
-						}
-					} else {
-						writer.println("New node");
+	public static List<Stop> generateRoute(Integer fromID, Integer toID)
+			throws PathNotFoundException, ClassNotFoundException, SQLException {
+		if (fromID == null)
+			throw new NullPointerException("fromID");
+		else if (toID == null)
+			throw new NullPointerException("toID");
+
+		Map<Integer, Stop> stopMap = DataBaseConnection.getStopMap();
+		Stop from = stopMap.getOrDefault(fromID, null);
+		Stop to = stopMap.getOrDefault(toID, null);
+		if (from == null)
+			throw new NullPointerException("from");
+		else if (to == null)
+			throw new NullPointerException("to");
+
+		if (stopMap.get(from.getId()).getConns().contains(to.getId()))
+			return Arrays.asList(from, to);
+
+		List<Node> openList = new ArrayList<Node>(Arrays.asList(new Node(from)));
+		List<Node> closeList = new ArrayList<Node>(stopMap.size());
+
+		Node endNode = null;
+		while (openList.size() != 0) {
+			Node current = openList.get(0);
+			openList.remove(0);
+			closeList.add(current);
+
+			if (current.stop == to) {
+				endNode = current;
+			} else if (endNode != null && minValueCostFromStartFromOpenList(openList) < endNode.costFromStart) {
+				return reconstructPath(endNode);
+			}
+
+			for (int i = 0; i < current.stop.getConns().size(); ++i) {
+				Node newNode = new Node(stopMap.get(current.stop.getConns().get(i)), current);
+				newNode.costFromStart = current.costFromStart + distance(current.stop, newNode.stop);
+				newNode.costToEnd = distance(newNode.stop, to);
+
+				if (closeList.contains(newNode)) {
+					Node oldNode = closeList.get(closeList.indexOf(newNode));
+					if (newNode.costFromStart < oldNode.costFromStart) {
+						closeList.remove(oldNode);
 						openList.add(newNode);
 					}
+				} else if (openList.contains(newNode)) {
+					Node oldNode = openList.get(openList.indexOf(newNode));
+					if (newNode.costFromStart < oldNode.costFromStart) {
+						oldNode.costFromStart = newNode.costFromStart;
+						oldNode.parent = newNode.parent;
+					}
+				} else {
+					openList.add(newNode);
 				}
-				
-				Collections.sort(openList);
-				
-				writer.flush();
 			}
-		} catch (IOException e) {
-			   // do something
+
+			Collections.sort(openList);
 		}
 
 		throw new PathNotFoundException();
+	}
+	
+	public static Schedule getSchedule(Integer lineNum, Integer stopId) throws ClassNotFoundException, SQLException {
+		Line line = DataBaseConnection.getLine(lineNum);
+		Map<Integer, Stop> allStops = DataBaseConnection.getStopMap();
+		Stop stop = allStops.get(stopId);
+		
+		Schedule schedule = new Schedule();
+		schedule.setLine(line);
+		schedule.setStop(stop);
+		Map<String, List<LocalTime>> times = new HashMap<String, List<LocalTime>>();
+		if (line.getVariants() == null) {
+			times.put("0", generateSchedule(line, stop, true, allStops));
+			times.put("1", generateSchedule(line, stop, false, allStops));
+		} else {
+			times.put(line.getVariants().get(0), generateSchedule(line, stop, true, allStops));
+			times.put(line.getVariants().get(1), generateSchedule(line, stop, false, allStops));
+		}
+		schedule.setTimes(times);
+		
+		return schedule;
 	}
 
 	private static List<Stop> reconstructPath(Node node) {
@@ -150,11 +154,65 @@ public final class Util {
 		return minVal;
 	}
 	
-	private static void printList(PrintWriter out, List<Node> stops, String listName) {
-		out.print(listName + " contains: ");
-		for (Node node : stops) {
-			out.print(node.stop.getId() + " ");
+	public static List<Line> getAllLineOnStop(Stop stop, Map<Integer, Line> allLines) {
+		List<Line> lines = new ArrayList<Line>();
+		
+		for (Map.Entry<Integer, Line> lineEntry : allLines.entrySet()) {
+			if (lineEntry.getValue().getRoute().contains(stop.getId())) {
+				lines.add(lineEntry.getValue());
+			}
 		}
-		out.println();
+		
+		return lines;
+	}
+	
+	private static List<LocalTime> generateSchedule(Line line, Stop stop, boolean direction, Map<Integer, Stop> allStops) {
+		int timeShift = 0;
+		if (!line.getRoute().contains(stop.getId())) {
+			throw new RuntimeException("Stop is not in line route!");
+		}
+		if (direction) {
+			Stop lastStop = allStops.get(line.getRoute().get(0));
+			for (int i = 1; !lastStop.getId().equals(stop.getId()); ++i) {
+				Stop currentStop = allStops.get(line.getRoute().get(i));
+
+				timeShift += timeBetweenStops(currentStop, lastStop);
+				lastStop = currentStop;
+			}
+		} else {
+			Stop lastStop = allStops.get(line.getRoute().get(line.getRoute().size() - 1));
+			for (int i = line.getRoute().size() - 2; !lastStop.getId().equals(stop.getId()); --i) {
+				Stop currentStop = allStops.get(line.getRoute().get(i));
+
+				timeShift += timeBetweenStops(currentStop, lastStop);
+				lastStop = currentStop;
+			}
+		}
+		
+		LocalTime firstFromStop = line.getFirst().toLocalTime().plusMinutes(timeShift);
+		LocalTime lastFromStop = line.getLast().toLocalTime().plusMinutes(timeShift);
+		
+		LocalTime morningPeakStartOnStop = Constants.MORNING_PEAK_START.plusMinutes(timeShift);
+		LocalTime morningPeakEndOnStop = Constants.MORNING_PEAK_END.plusMinutes(timeShift);
+		LocalTime afternoonPeakStartOnStop = Constants.AFTERNOON_PEAK_START.plusMinutes(timeShift);
+		LocalTime afternoonPeakEndOnStop = Constants.AFTERNOON_PEAK_END.plusMinutes(timeShift);
+		
+		List<LocalTime> schedule = new ArrayList<LocalTime>();
+		for (LocalTime currTime = firstFromStop; currTime.isBefore(lastFromStop); ) {
+			schedule.add(currTime);
+
+			if ((currTime.isAfter(morningPeakStartOnStop) && currTime.isBefore(morningPeakEndOnStop)) ||
+				(currTime.isAfter(afternoonPeakStartOnStop) && currTime.isBefore(afternoonPeakEndOnStop))) {
+				currTime = currTime.plusMinutes((long)line.getFPeak().intValue());
+			} else {
+				currTime = currTime.plusMinutes((long)line.getFNotPeak().intValue());
+			}
+		}
+
+		return schedule;
+	}
+	
+	private static int timeBetweenStops(Stop from, Stop to) {
+		return from.getTimes().get(from.getConns().indexOf(to.getId()));
 	}
 }
