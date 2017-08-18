@@ -2,7 +2,9 @@ package zti.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalTime;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -48,21 +50,19 @@ public class SearchRoute extends HttpServlet {
 		
 		Integer from = Integer.valueOf(request.getParameterValues(Constants.FROM)[0]);
 		Integer to = Integer.valueOf(request.getParameterValues(Constants.TO)[0]);
+		LocalTime startTime = LocalTime.parse(request.getParameterValues(Constants.TIME)[0]);
 		
 		try {
+			List<Stop> path = Util.generatePath(from, to);
+			
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 			
 			Document doc = docBuilder.newDocument();
-			Element rootElement = doc.createElement(Constants.ROUTE);
+			Element rootElement = Util.generateRoute(path, startTime).toXml(doc, path);
 			rootElement.setAttribute(Constants.XSI, Constants.XSI_VAL);
 			rootElement.setAttribute(Constants.XSD, Constants.XSD_VAL);
-			
-			for (Stop stop : Util.generateRoute(from, to)) {
-				Element stopElement = doc.createElement(Constants.STOP);
-				stopElement.setAttribute(Constants.ID, stop.getId().toString());
-				rootElement.appendChild(stopElement);
-			}
+
 			doc.appendChild(rootElement);
 			
 			Util.writeXmlToPrintWriter(doc, out);

@@ -17,6 +17,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javafx.util.Pair;
 import zti.server.data.*;
 import zti.server.data.exception.PathNotFoundException;
 import zti.server.sql.DataBaseConnection;
@@ -45,7 +46,7 @@ public final class Util {
 		transformer.transform(source, result);
 	}
 
-	public static List<Stop> generateRoute(Integer fromID, Integer toID)
+	public static List<Stop> generatePath(Integer fromID, Integer toID)
 			throws PathNotFoundException, ClassNotFoundException, SQLException {
 		if (fromID == null)
 			throw new NullPointerException("fromID");
@@ -126,6 +127,76 @@ public final class Util {
 		
 		return schedule;
 	}
+	
+	public static List<Line> getAllLineOnStop(Stop stop, Map<Integer, Line> allLines) {
+		List<Line> lines = new ArrayList<Line>();
+		
+		for (Map.Entry<Integer, Line> lineEntry : allLines.entrySet()) {
+			if (lineEntry.getValue().getRoute().contains(stop.getId())) {
+				lines.add(lineEntry.getValue());
+			}
+		}
+		
+		return lines;
+	}
+	
+	public static Route generateRoute(List<Stop> path, LocalTime startTime)
+			throws ClassNotFoundException, SQLException {
+		Map<Integer, Line> allLines = DataBaseConnection.getLineMap();
+		Map<Integer, Stop> allStops = DataBaseConnection.getStopMap();
+
+		Map<Stop, Pair<Line, LocalTime>> route = new HashMap<Stop, Pair<Line, LocalTime>>();
+		Line currentLine = null;
+		LocalTime currentTime = LocalTime.of(startTime.getHour(), startTime.getMinute());
+		int currentScheduleIndex = -1;
+		boolean currentDirection = true;
+		for (int i = 0; i < path.size(); ++i) {
+			Stop currentStop = path.get(i);
+
+			List<Line> linesOnStop = getAllLineOnStop(currentStop, allLines);
+			if (currentLine == null || (i < path.size() -1 && !currentLine.getRoute().contains(path.get(i + 1)))) { //jesli poczatek lub linia 
+				Map<Line, Boolean> interestingLines = new HashMap<Line, Boolean>();
+				for (Line line : linesOnStop) {
+					if (line.getRoute().contains(path.get(i + 1).getId())) {
+						interestingLines.put(line, getDirection(line, currentStop, path.get(i + 1)));
+					}
+				}
+
+				Map<Line, Pair<LocalTime, Integer>> lineFirstDeparture = new HashMap<Line, Pair<LocalTime, Integer>>();
+				for (Map.Entry<Line, Boolean> entry : interestingLines.entrySet()) {
+					List<LocalTime> lineSchedule = generateSchedule(entry.getKey(), currentStop, entry.getValue(), allStops);
+
+					for (int j = 0; j < lineSchedule.size(); ++j) {
+						if (lineSchedule.get(j).isAfter(currentTime)) {
+							lineFirstDeparture.put(entry.getKey(),
+									new Pair<LocalTime, Integer>(lineSchedule.get(j), j));
+							break;
+						}
+					}
+				}
+
+				LocalTime minTime = LocalTime.MAX;
+				for (Map.Entry<Line, Pair<LocalTime, Integer>> entry : lineFirstDeparture.entrySet()) {
+					if (entry.getValue().getKey().isBefore(minTime)) {
+						minTime = entry.getValue().getKey();
+						currentLine = entry.getKey();
+						currentScheduleIndex = entry.getValue().getValue();
+						currentDirection = getDirection(currentLine, currentStop, path.get(i + 1));
+						currentTime = entry.getValue().getKey();
+					}
+				}
+
+				route.put(currentStop, new Pair<Line, LocalTime>(currentLine, currentTime));
+				
+			} else {
+				List<LocalTime> lineSchedule = generateSchedule(currentLine, currentStop, currentDirection, allStops);
+				currentTime = lineSchedule.get(currentScheduleIndex);
+				route.put(currentStop, new Pair<Line, LocalTime>(currentLine, currentTime));
+			}
+		}
+
+		return new Route(route);
+	}
 
 	private static List<Stop> reconstructPath(Node node) {
 		List<Stop> route = new ArrayList<Stop>();
@@ -140,30 +211,18 @@ public final class Util {
 		return route;
 	}
 
-	public static float distance(Stop from, Stop to) {
+	private static float distance(Stop from, Stop to) {
 		return (float) Math.sqrt(((from.getLocX() - to.getLocX()) * (from.getLocX() - to.getLocX()))
 				+ ((from.getLocY() - to.getLocY()) * (from.getLocY() - to.getLocY())));
 	}
 
-	public static float minValueCostFromStartFromOpenList(List<Node> openList) {
+	private static float minValueCostFromStartFromOpenList(List<Node> openList) {
 		float minVal = Float.MIN_VALUE;
 		for (Node node : openList) {
 			if (node.costFromStart < minVal)
 				minVal = node.costFromStart;
 		}
 		return minVal;
-	}
-	
-	public static List<Line> getAllLineOnStop(Stop stop, Map<Integer, Line> allLines) {
-		List<Line> lines = new ArrayList<Line>();
-		
-		for (Map.Entry<Integer, Line> lineEntry : allLines.entrySet()) {
-			if (lineEntry.getValue().getRoute().contains(stop.getId())) {
-				lines.add(lineEntry.getValue());
-			}
-		}
-		
-		return lines;
 	}
 	
 	private static List<LocalTime> generateSchedule(Line line, Stop stop, boolean direction, Map<Integer, Stop> allStops) {
@@ -214,5 +273,9 @@ public final class Util {
 	
 	private static int timeBetweenStops(Stop from, Stop to) {
 		return from.getTimes().get(from.getConns().indexOf(to.getId()));
+	}
+	
+	private static Boolean getDirection(Line line, Stop firstStop, Stop lastStop) {
+		return line.getRoute().indexOf(firstStop.getId()) < line.getRoute().indexOf(lastStop.getId());
 	}
 }
