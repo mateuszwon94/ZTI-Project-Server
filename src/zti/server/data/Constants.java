@@ -28,6 +28,8 @@ public final class Constants {
 	public static final String SCHEDULES 	= "schedules";
 	public static final String SCHEDULE 	= "schedule";
 	public static final String CHANGE		= "change";
+	public static final String LOGS			= "logs";
+	public static final String LOG			= "log";
 	public static final String FROM 		= "from";
 	public static final String TO			= "to";
 	public static final String XSI			= "xmlns:xsi";
