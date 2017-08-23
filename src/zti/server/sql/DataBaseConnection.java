@@ -13,16 +13,47 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+ 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+ 
+@ManagedBean(name = "DataBaseConnection")
+@SessionScoped
 public final class DataBaseConnection {
 	private static final String url = "jdbc:postgresql://qdjjtnkv.db.elephantsql.com:5432/xggfrvfc";
 	private static final String username = "xggfrvfc";
 	private static final String password = "q1gFyHQUPS0ZkVzS9nqmlshn0CzDNGgC";
+	
+	private static final ConnJPA baza = new ConnJPA();
 
-	public static Map<Integer, Stop> getStopMap() throws SQLException, ClassNotFoundException {
+	public static Map<Integer, Stop> getStopMap() {
+		return baza.getStopMap();
+	}
+	
+	public static Map<Integer, Line> getLineMap() {
+		return baza.getLineMap();
+	}
+	
+	public static Stop getStop(Integer stopId) {
+		return baza.getStop(stopId);
+	}
+	
+	public static Line getLine(Integer number) {
+		return baza.getLine(number);
+	}
+	
+	public static Map<Integer, Stop> getStopMapLegacy() throws SQLException, ClassNotFoundException {
 		Class.forName("org.postgresql.Driver");
 		try (Connection conn = DriverManager.getConnection(url, username, password);
 			 Statement stmt = conn.createStatement();
@@ -48,7 +79,7 @@ public final class DataBaseConnection {
 		}
 	}
 
-	public static Map<Integer, Line> getLineMap() throws SQLException, ClassNotFoundException {
+	public static Map<Integer, Line> getLineMapLegacy() throws SQLException, ClassNotFoundException {
 		Class.forName("org.postgresql.Driver");
 		try (Connection conn = DriverManager.getConnection(url, username, password);
 			 Statement stmt = conn.createStatement();
@@ -74,7 +105,27 @@ public final class DataBaseConnection {
 		}
 	}
 
-	public static Line getLine(Integer number) throws SQLException, ClassNotFoundException {
+	public static Stop getStopLegacy(Integer stopId) throws SQLException, ClassNotFoundException {
+		Class.forName("org.postgresql.Driver");
+		try (Connection conn = DriverManager.getConnection(url, username, password);
+			 Statement stmt = conn.createStatement();
+			 ResultSet rset = stmt.executeQuery(Constants.Querys.GET_SINGLE_STOP.replace("{$0}", stopId.toString()))) {
+			Stop stop = new Stop();
+
+			rset.next();
+			stop.setId(rset.getInt(Constants.ID));
+			stop.setName(rset.getString(Constants.NAME));
+			stop.setNz(rset.getBoolean(Constants.NZ));
+			stop.setLocX(rset.getFloat(Constants.LOC_X));
+			stop.setLocY(rset.getFloat(Constants.LOC_Y));
+			stop.setConns(new ArrayList<Integer>(Arrays.asList((Integer[]) rset.getArray(Constants.CONNS).getArray())));
+			stop.setTimes(new ArrayList<Integer>(Arrays.asList((Integer[]) rset.getArray(Constants.TIMES).getArray())));
+
+			return stop;
+		}
+	}
+
+	public static Line getLineLegacy(Integer number) throws SQLException, ClassNotFoundException {
 		Class.forName("org.postgresql.Driver");
 		try (Connection conn = DriverManager.getConnection(url, username, password);
 			 Statement stmt = conn.createStatement();
@@ -93,26 +144,6 @@ public final class DataBaseConnection {
 			line.setLast(rset.getTime(Constants.LAST));
 
 			return line;
-		}
-	}
-
-	public static Stop getStop(Integer stopId) throws SQLException, ClassNotFoundException {
-		Class.forName("org.postgresql.Driver");
-		try (Connection conn = DriverManager.getConnection(url, username, password);
-			 Statement stmt = conn.createStatement();
-			 ResultSet rset = stmt.executeQuery(Constants.Querys.GET_SINGLE_STOP.replace("{$0}", stopId.toString()))) {
-			Stop stop = new Stop();
-
-			rset.next();
-			stop.setId(rset.getInt(Constants.ID));
-			stop.setName(rset.getString(Constants.NAME));
-			stop.setNz(rset.getBoolean(Constants.NZ));
-			stop.setLocX(rset.getFloat(Constants.LOC_X));
-			stop.setLocY(rset.getFloat(Constants.LOC_Y));
-			stop.setConns(new ArrayList<Integer>(Arrays.asList((Integer[]) rset.getArray(Constants.CONNS).getArray())));
-			stop.setTimes(new ArrayList<Integer>(Arrays.asList((Integer[]) rset.getArray(Constants.TIMES).getArray())));
-
-			return stop;
 		}
 	}
 }
