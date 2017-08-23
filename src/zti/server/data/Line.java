@@ -12,6 +12,9 @@ import zti.server.sql.DataBaseConnection;
 import zti.server.util.Util;
 
 
+@Entity
+@Table(name = "lines")
+@NamedQuery(name="findAllLines", query="SELECT l FROM Line l ORDER BY l.number")
 public class Line implements Serializable {
 	public Line() { }
 	
@@ -69,8 +72,15 @@ public class Line implements Serializable {
 		return lineElement;
 	}
 	
+	@Id
 	private Integer number;
+	
+	@Column(name = Constants.VARIANTS, columnDefinition = "text[]")
+	@Convert(converter = zti.server.data.converter.TextListToArrayConveter.class)
 	private List<String> variants;
+	
+	@Column(name = Constants.ROUTE, columnDefinition = "int[]")
+	@Convert(converter = zti.server.data.converter.IntListToArrayConveter.class)
 	private List<Integer> route;
 	private Integer f_peak;
 	private Integer f_not_peak;

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+	xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="Elephant DB" transaction-type="RESOURCE_LOCAL">
+		<non-jta-data-source>jdbc/postgresql</non-jta-data-source>
+		<class>zti.server.data.Line</class>
+		<class>zti.server.data.Stop</class>
+		<class>zti.server.data.converter.TextListToArrayConveter</class>
+		<class>zti.server.data.converter.IntListToArrayConveter</class>
+		<properties>
+			<property name="eclipselink.logging.level" value="FINEST" />
+			<property name="eclipselink.logging.logger" value="ServerLogger" />
+		</properties>
+	</persistence-unit>
+</persistence>

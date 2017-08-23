@@ -32,6 +32,7 @@ public final class Constants {
 	public static final String LOG			= "log";
 	public static final String FROM 		= "from";
 	public static final String TO			= "to";
+	public static final String NULL 		= "NULL";
 	public static final String XSI			= "xmlns:xsi";
 	public static final String XSD			= "xmlns:xsd";
 	public static final String XSI_VAL		= "http://www.w3.org/2001/XMLSchema-instance";

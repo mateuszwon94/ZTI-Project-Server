@@ -11,6 +11,9 @@ import org.w3c.dom.Element;
 import zti.server.sql.DataBaseConnection;
 import zti.server.util.Util;
 
+@Entity
+@Table(name = "stops")
+@NamedQuery(name="findAllStops", query="SELECT s FROM Stop s ORDER BY s.id")
 public class Stop implements Serializable {
 	public Stop() {	}
 
@@ -24,8 +27,6 @@ public class Stop implements Serializable {
 		this.times = times;
 	}
 	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public Integer getId() { return id; }
 	public void setId(Integer id) { this.id = id; }
 	
@@ -35,9 +36,11 @@ public class Stop implements Serializable {
 	public Boolean getNz() { return nz; }
 	public void setNz(Boolean nz) { this.nz = nz; }
 	
+	@Column(name="loc_x")
 	public Float getLocX() { return loc_x; }
 	public void setLocX(Float loc_x) { this.loc_x = loc_x; }
 	
+	@Column(name="loc_y")
 	public Float getLocY() { return loc_y; }
 	public void setLocY(Float loc_y) { this.loc_y = loc_y; }
 	
@@ -64,13 +67,21 @@ public class Stop implements Serializable {
 		
 		return stopElement;
 	}
-
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	private String name;
 	private Boolean nz;
 	private Float loc_x;
 	private Float loc_y;
+	
+	@Column(name = Constants.CONNS, columnDefinition = "int[]")
+	@Convert(converter = zti.server.data.converter.IntListToArrayConveter.class)
 	private List<Integer> conns;
+	
+	@Column(name = Constants.TIMES, columnDefinition = "int[]")
+	@Convert(converter = zti.server.data.converter.IntListToArrayConveter.class)
 	private List<Integer> times;
 
 	private static final long serialVersionUID = 1L;
