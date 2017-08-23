@@ -8,7 +8,7 @@ import javax.persistence.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javafx.util.Pair;
+import zti.server.util.Pair;
 import zti.server.sql.DataBaseConnection;
 import zti.server.util.Util;
 
