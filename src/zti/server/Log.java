@@ -28,6 +28,10 @@ import zti.server.data.Constants;
 import zti.server.util.Logger;
 import zti.server.util.Util;
 
+/**
+ * @author Mateusz Winiarski
+ * Servlet odpowiedzialny za wyswietlanie logow uzytkownikowi
+ */
 @WebServlet("/Log")
 public class Log extends HttpServlet {
 	public Log() {
@@ -35,14 +39,11 @@ public class Log extends HttpServlet {
 	}
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * Metoda wykonujaca rzadania GET protokolu HTTP
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		// response.getWriter().append("Served at: ").append(request.getContextPath());
-
 		response.setContentType("text/xml");
 		PrintWriter out = response.getWriter();
 
@@ -70,12 +71,20 @@ public class Log extends HttpServlet {
 		}
 	}
 
+	/**
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * Metoda wykonujaca rzadania POST protokolu HTTP
+	 * Przekazuje rzadanie do metody doGet
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doGet(request, response);
 	}
 
-	private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	/**
+	 * Format w jakim wyswietlana jest data w logu
+	 */
+	private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	private static final long serialVersionUID = 1L;
 }

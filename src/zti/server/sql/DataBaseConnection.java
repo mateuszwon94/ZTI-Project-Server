@@ -28,31 +28,52 @@ import javax.sql.DataSource;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
  
+/**
+ * @author Mateusz Winiarski
+ * Klasa realizujaca zapytania do bazy danych
+ */
 @ManagedBean(name = "DataBaseConnection")
 @SessionScoped
 public final class DataBaseConnection {
-	private static final String url = "jdbc:postgresql://qdjjtnkv.db.elephantsql.com:5432/xggfrvfc";
-	private static final String username = "xggfrvfc";
-	private static final String password = "q1gFyHQUPS0ZkVzS9nqmlshn0CzDNGgC";
-	
-	private static final ConnJPA baza = new ConnJPA();
-
+	/**
+	 * Funkcja wykorzystuje mechanizm JPA
+	 * @return wszystkie przystanki z bazy danych
+	 */
 	public static Map<Integer, Stop> getStopMap() {
 		return baza.getStopMap();
 	}
-	
+
+	/**
+	 * Funkcja wykorzystuje mechanizm JPA
+	 * @return wszystkie linie z bazy danych
+	 */
 	public static Map<Integer, Line> getLineMap() {
 		return baza.getLineMap();
 	}
-	
+
+	/**
+	 * Funkcja wykorzystuje mechanizm JPA
+	 * @param stopId ID szukanego przystanku
+	 * @return przystanek o szukanym ID
+	 */
 	public static Stop getStop(Integer stopId) {
 		return baza.getStop(stopId);
 	}
-	
+
+	/**
+	 * Funkcja wykorzystuje mechanizm JPA
+	 * @param lineNumber numer szukanej linii
+	 * @return linia o szukanym numerze
+	 */
 	public static Line getLine(Integer number) {
 		return baza.getLine(number);
 	}
 	
+	/**
+	 * Funkcja wykorzystuje mechanizm JDBC
+	 * Funkcja uzywana przed zaimplementowaniem JPA w projekcie pozostawiona w celach pogladowych
+	 * @return wszystkie przystanki z bazy danych
+	 */
 	public static Map<Integer, Stop> getStopMapLegacy() throws SQLException, ClassNotFoundException {
 		Class.forName("org.postgresql.Driver");
 		try (Connection conn = DriverManager.getConnection(url, username, password);
@@ -79,6 +100,11 @@ public final class DataBaseConnection {
 		}
 	}
 
+	/**
+	 * Funkcja wykorzystuje mechanizm JDBC
+	 * Funkcja uzywana przed zaimplementowaniem JPA w projekcie pozostawiona w celach pogladowych
+	 * @return wszystkie linie z bazy danych
+	 */
 	public static Map<Integer, Line> getLineMapLegacy() throws SQLException, ClassNotFoundException {
 		Class.forName("org.postgresql.Driver");
 		try (Connection conn = DriverManager.getConnection(url, username, password);
@@ -105,6 +131,12 @@ public final class DataBaseConnection {
 		}
 	}
 
+	/**
+	 * Funkcja wykorzystuje mechanizm JDBC
+	 * Funkcja uzywana przed zaimplementowaniem JPA w projekcie pozostawiona w celach pogladowych
+	 * @param stopId ID szukanego przystanku
+	 * @return przystanek o szukanym ID
+	 */
 	public static Stop getStopLegacy(Integer stopId) throws SQLException, ClassNotFoundException {
 		Class.forName("org.postgresql.Driver");
 		try (Connection conn = DriverManager.getConnection(url, username, password);
@@ -125,11 +157,17 @@ public final class DataBaseConnection {
 		}
 	}
 
-	public static Line getLineLegacy(Integer number) throws SQLException, ClassNotFoundException {
+	/**
+	 * Funkcja wykorzystuje mechanizm JDBC
+	 * Funkcja uzywana przed zaimplementowaniem JPA w projekcie pozostawiona w celach pogladowych
+	 * @param lineNumber numer szukanej linii
+	 * @return linia o szukanym numerze
+	 */
+	public static Line getLineLegacy(Integer lineNumber) throws SQLException, ClassNotFoundException {
 		Class.forName("org.postgresql.Driver");
 		try (Connection conn = DriverManager.getConnection(url, username, password);
 			 Statement stmt = conn.createStatement();
-			 ResultSet rset = stmt.executeQuery(Constants.Querys.GET_SINGLE_LINE.replace("{$0}", number.toString()))) {
+			 ResultSet rset = stmt.executeQuery(Constants.Querys.GET_SINGLE_LINE.replace("{$0}", lineNumber.toString()))) {
 			Line line = new Line();
 
 			rset.next();
@@ -146,4 +184,10 @@ public final class DataBaseConnection {
 			return line;
 		}
 	}
+
+	private static final String url = "jdbc:postgresql://qdjjtnkv.db.elephantsql.com:5432/xggfrvfc";
+	private static final String username = "xggfrvfc";
+	private static final String password = "q1gFyHQUPS0ZkVzS9nqmlshn0CzDNGgC";
+	
+	private static final ConnJPA baza = new ConnJPA();
 }

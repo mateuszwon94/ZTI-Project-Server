@@ -31,6 +31,10 @@ import zti.server.util.*;
 import zti.server.data.*;
 import zti.server.sql.*;
 
+/**
+ * @author Mateusz Winiarski
+ * Servlet odpowiedzialny za odczytywanie przestanków z bazy danych i wyswietlanie ich uzytkownikowi
+ */
 @WebServlet("/Stops")
 public class Stops extends HttpServlet {
 	public Stops() {
@@ -38,8 +42,8 @@ public class Stops extends HttpServlet {
 	}
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * Metoda wykonujaca rzadania GET protokolu HTTP
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -77,7 +81,12 @@ public class Stops extends HttpServlet {
 			Util.printException(e, out);
 		}
 	}
-
+	
+	/**
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * Metoda wykonujaca rzadania POST protokolu HTTP
+	 * Przekazuje rzadanie do metody doGet
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doGet(request, response);

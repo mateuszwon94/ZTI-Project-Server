@@ -2,6 +2,10 @@ package zti.server.data;
 
 import java.time.LocalTime;
 
+/**
+ * @author Mateusz Winiarski
+ * Klasa zawirajaca wszystkie stale uzywane w programie
+ */
 public final class Constants {
 	public static final String STOPS 		= "stops";
 	public static final String STOP 		= "stop";
@@ -43,6 +47,11 @@ public final class Constants {
 	public static final LocalTime AFTERNOON_PEAK_START = LocalTime.of(14, 30);
 	public static final LocalTime AFTERNOON_PEAK_END = LocalTime.of(17, 30);
 	
+	/**
+	 * @author Mateusz Winiarski
+	 * Klasa zawierajaca zapytania do bazy danych
+	 * Obecnie nie uzywane
+	 */
 	public final class Querys {
 		public static final String GET_ALL_STOPS = "SELECT * FROM public.stops ORDER BY id";
 		public static final String GET_ALL_LINES = "SELECT * FROM public.lines ORDER BY number";

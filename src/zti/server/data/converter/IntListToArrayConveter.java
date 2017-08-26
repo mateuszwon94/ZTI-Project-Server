@@ -13,10 +13,16 @@ import java.util.List;
 import javax.persistence.Entity;
 
 /**
- * Created by study on 11/15/14.
+ * @author Mateusz Winiarski
+ * Konwerter z tablicy bazodanowej na liste intow
  */
 @Converter(autoApply = true)
 public class IntListToArrayConveter implements AttributeConverter<List<Integer>, Object> {
+	/**
+	 * Funkcja konwertujaca na tablice bazodanowa
+	 * @param attribute lista intow
+	 * @see javax.persistence.AttributeConverter#convertToDatabaseColumn(java.lang.Object)
+	 */
 	@Override
 	public PostgreSQLIntArray convertToDatabaseColumn(List<Integer> attribute) {
 		if (attribute == null || attribute.isEmpty()) {
@@ -26,6 +32,11 @@ public class IntListToArrayConveter implements AttributeConverter<List<Integer>,
 		return new PostgreSQLIntArray(attribute.toArray(rst));
 	}
 
+	/**
+	 * Funkcja konwertujaca na liste intow
+	 * @param dbData tablica bazodanowa
+	 * @see javax.persistence.AttributeConverter#convertToEntityAttribute(java.lang.Object)
+	 */
 	@Override
 	public List<Integer> convertToEntityAttribute(Object dbData) {
 		try {

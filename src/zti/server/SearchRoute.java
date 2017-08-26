@@ -29,22 +29,21 @@ import zti.server.util.*;
 import zti.server.data.*;
 
 /**
- * Servlet implementation class SearchRoute
+ * @author Mateusz Winiarski
+ * Servlet odpowiedzialny za generowanie trasy przejazdu i wyswietlanie jej uzytkownikowi
  */
 @WebServlet("/SearchRoute")
 public class SearchRoute extends HttpServlet {	
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public SearchRoute() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * Metoda wykonujaca rzadania GET protokolu HTTP
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		response.setContentType("text/xml");
 		PrintWriter out = response.getWriter();
 		
@@ -74,9 +73,12 @@ public class SearchRoute extends HttpServlet {
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * Metoda wykonujaca rzadania POST protokolu HTTP
+	 * Przekazuje rzadanie do metody doGet
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		doGet(request, response);
 	}
 

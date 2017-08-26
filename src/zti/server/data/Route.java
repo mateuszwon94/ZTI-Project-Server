@@ -12,21 +12,45 @@ import zti.server.util.Pair;
 import zti.server.sql.DataBaseConnection;
 import zti.server.util.Util;
 
+/**
+ * @author Mateusz Winiarski
+ * Klasa reprezentujaca wyznaczona trase przejazdu
+ */
 public class Route {
+	/**
+	 * Konstruktor domyslny
+	 */
 	public Route() { }
-	public Route(Map<Stop, Pair<Line, LocalTime>> connections) { this.connections = connections; }
 	
-	public Map<Stop, Pair<Line, LocalTime>> getConnections() { return connections; }
-	public void setConnections(Map<Stop, Pair<Line, LocalTime>> connections) { this.connections = connections; }
+	/**
+	 * Konstruktor
+	 * @param route trasa przejazdu
+	 */
+	public Route(Map<Stop, Pair<Line, LocalTime>> route) { this.route = route; }
 	
+	/**
+	 * @return trasa przejazdu
+	 */
+	public Map<Stop, Pair<Line, LocalTime>> getRoute() { return route; }
+	
+	/**
+	 * @param route nowa trasa przejazdu
+	 */
+	public void setRoute(Map<Stop, Pair<Line, LocalTime>> route) { this.route = route; }
+	
+	/**
+	 * Przeksztalca obiekt do postaci elementu XML
+	 * @param doc Dokument w jakim generowany jest XML
+	 * @return wygenerowany element XML
+	 */
 	public Element toXml(Document doc, List<Stop> path) {
 		Element routeElement = doc.createElement(Constants.ROUTE);
 
 		for (Stop stop : path) {
 			Element lineElement = doc.createElement(Constants.STOP);
 			lineElement.setAttribute(Constants.ID, stop.getId().toString());
-			lineElement.appendChild(Util.createElement(doc, Constants.LINE, connections.get(stop).getKey().getNumber().toString()));
-			lineElement.appendChild(Util.createElement(doc, Constants.TIME, connections.get(stop).getValue().toString()));
+			lineElement.appendChild(Util.createElement(doc, Constants.LINE, route.get(stop).getKey().getNumber().toString()));
+			lineElement.appendChild(Util.createElement(doc, Constants.TIME, route.get(stop).getValue().toString()));
 
 			routeElement.appendChild(lineElement);
 		}
@@ -34,5 +58,5 @@ public class Route {
 		return routeElement;
 	}
 	
-	private Map<Stop, Pair<Line, LocalTime>> connections;
+	private Map<Stop, Pair<Line, LocalTime>> route;
 }

@@ -11,11 +11,14 @@ import zti.server.data.Stop;
 import zti.server.data.Constants;
 import zti.server.data.Line;
 
+/**
+ * @author Mateusz Winiarski
+ * Klasa reprezentujaca polaczenie z baza danych przy pomocy JPA
+ */
 public class ConnJPA {
-	private EntityManagerFactory managerFactory = Persistence.createEntityManagerFactory("Elephant DB");
-	private EntityManager entityManager = managerFactory.createEntityManager();
-	private EntityTransaction entityTransaction = entityManager.getTransaction();
-
+	/**
+	 * @return wszystkie przystanki z bazy danych
+	 */
 	public Map<Integer, Stop> getStopMap() {
 		Map<Integer, Stop> stopMap = new LinkedHashMap<Integer, Stop>();
 		try {
@@ -27,6 +30,9 @@ public class ConnJPA {
 		return stopMap;
 	}
 
+	/**
+	 * @return wszystkie linie z bazy danych
+	 */
 	public Map<Integer, Line> getLineMap() {
 		Map<Integer, Line> lineMap = new LinkedHashMap<Integer, Line>();
 		try {
@@ -38,6 +44,10 @@ public class ConnJPA {
 		return lineMap;
 	}
 
+	/**
+	 * @param stopId ID szukanego przystanku
+	 * @return przystanek o szukanym ID
+	 */
 	public Stop getStop(Integer stopId) {
 		try {
 			return (Stop) entityManager.createQuery("SELECT s FROM Stop s WHERE s.id = " + stopId.toString()).getSingleResult();
@@ -47,6 +57,10 @@ public class ConnJPA {
 		}
 	}
 
+	/**
+	 * @param lineNumber numer szukanej linii
+	 * @return linia o szukanym numerze
+	 */
 	public Line getLine(Integer lineNumber) {
 		try {
 			return (Line) entityManager.createQuery("SELECT l FROM Line l WHERE l.number = " + lineNumber.toString()).getSingleResult();
@@ -55,4 +69,9 @@ public class ConnJPA {
 			throw e;
 		}
 	}
+	
+	private EntityManagerFactory managerFactory = Persistence.createEntityManagerFactory("Elephant DB");
+	private EntityManager entityManager = managerFactory.createEntityManager();
+	private EntityTransaction entityTransaction = entityManager.getTransaction();
+
 }

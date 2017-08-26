@@ -7,24 +7,33 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Map;
 
+/**
+ * @author Mateusz Winiarski
+ * Klasa reprezentujaca tablice stringow w bazie danych
+ */
 public class PostgreSQLTextArray implements java.sql.Array {
+	/**
+	 * Konstruktor
+	 * @param stringArray tablica na jakiej podstawie ma byc stworzona
+	 */
 	public PostgreSQLTextArray(String[] stringArray) {
 		this.stringArray = stringArray;
 		this.stringValue = stringArrayToPostgreSQLTextArray(this.stringArray);
 	}
 
+	/**
+	 * tekstowa reprezentacja tablicy
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return stringValue;
 	}
 
 	/**
-	 * This static method can be used to convert an string array to string
-	 * representation of PostgreSQL text array.
-	 * 
-	 * @param a
-	 *            source String array
-	 * @return string representation of a given text array
+	 * Przeksztalca na tablice w PostgreSQL
+	 * @param stringArray tablica do przeksztalcenia
+	 * @return tekstowa reprezentacja tablicy
 	 */
 	public static String stringArrayToPostgreSQLTextArray(String[] stringArray) {
 		final int arrayLength;
@@ -33,12 +42,12 @@ public class PostgreSQLTextArray implements java.sql.Array {
 		} else if ((arrayLength = stringArray.length) == 0) {
 			return "{}";
 		}
-		// count the string length and if need to quote
-		int neededBufferLentgh = 2; // count the beginning '{' and the ending '}' brackets
+		// dlugosc stringa i czy trzeba wstawic cudzyslow
+		int neededBufferLentgh = 2; // zawsze sa dwa znaki { i }
 		boolean[] shouldQuoteArray = new boolean[stringArray.length];
+		
 		for (int si = 0; si < arrayLength; si++) {
-			// count the comma after the first element
-			if (si > 0)
+			if (si > 0) // przecinek po pierwszym elemencie
 				neededBufferLentgh++;
 
 			boolean shouldQuote;
@@ -53,14 +62,14 @@ public class PostgreSQLTextArray implements java.sql.Array {
 					shouldQuote = true;
 				} else {
 					shouldQuote = false;
-					// scan for commas and quotes
+					// szukanie znakow wymagajacych cudzyslowia
 					for (int i = 0; i < l; i++) {
 						final char ch = s.charAt(i);
 						switch (ch) {
 						case '"':
 						case '\\':
 							shouldQuote = true;
-							// we will escape these characters
+							// potrzeba dodatkowego znaku
 							neededBufferLentgh++;
 							break;
 						case ',':
@@ -77,14 +86,14 @@ public class PostgreSQLTextArray implements java.sql.Array {
 						}
 					}
 				}
-				// count the quotes
+				// policzenie cudzyslowia
 				if (shouldQuote)
 					neededBufferLentgh += 2;
 			}
 			shouldQuoteArray[si] = shouldQuote;
 		}
 
-		// construct the String
+		// konstrukcja stringa
 		final StringBuilder sb = new StringBuilder(neededBufferLentgh);
 		sb.append('{');
 		for (int si = 0; si < arrayLength; si++) {
@@ -108,60 +117,93 @@ public class PostgreSQLTextArray implements java.sql.Array {
 			}
 		}
 		sb.append('}');
-		assert sb.length() == neededBufferLentgh;
+
 		return sb.toString();
 	}
 
+	/**
+	 * @see java.sql.Array#getArray()
+	 */
 	@Override
 	public Object getArray() throws SQLException {
 		return stringArray == null ? null : Arrays.copyOf(stringArray, stringArray.length);
 	}
 
+	/**
+	 * @see java.sql.Array#getArray(java.util.Map)
+	 */
 	@Override
 	public Object getArray(Map<String, Class<?>> map) throws SQLException {
 		return getArray();
 	}
 
+	/**
+	 * @see java.sql.Array#getArray(long, int)
+	 */
 	@Override
 	public Object getArray(long index, int count) throws SQLException {
 		return stringArray == null ? null : Arrays.copyOfRange(stringArray, (int) index, (int) index + count);
 	}
 
+	/**
+	 * @see java.sql.Array#getArray(long, int, java.util.Map)
+	 */
 	@Override
 	public Object getArray(long index, int count, Map<String, Class<?>> map) throws SQLException {
 		return getArray(index, count);
 	}
 
+	/**
+	 * @see java.sql.Array#getBaseType()
+	 */
 	@Override
 	public int getBaseType() throws SQLException {
-		return java.sql.Types.VARCHAR;
+		return java.sql.Types.INTEGER;
 	}
 
+	/**
+	 * @see java.sql.Array#getBaseTypeName()
+	 */
 	@Override
 	public String getBaseTypeName() throws SQLException {
-		return "text";
+		return "int";
 	}
 
+	/**
+	 * @see java.sql.Array#getResultSet()
+	 */
 	@Override
 	public ResultSet getResultSet() throws SQLException {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * @see java.sql.Array#getResultSet(java.util.Map)
+	 */
 	@Override
 	public ResultSet getResultSet(Map<String, Class<?>> map) throws SQLException {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * @see java.sql.Array#getResultSet(long, int)
+	 */
 	@Override
 	public ResultSet getResultSet(long index, int count) throws SQLException {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * @see java.sql.Array#getResultSet(long, int, java.util.Map)
+	 */
 	@Override
 	public ResultSet getResultSet(long index, int count, Map<String, Class<?>> map) throws SQLException {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * @see java.sql.Array#free()
+	 */
 	@Override
 	public void free() throws SQLException { }
 
