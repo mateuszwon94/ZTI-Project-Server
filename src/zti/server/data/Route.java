@@ -55,5 +55,20 @@ public class Route {
 		return routeElement;
 	}
 	
+	@Override
+	public boolean equals(Object other) {
+		if (other == null) return false;
+		if (other == this) return true;
+		if (!(other instanceof Route)) return false;
+		Route otherRoute = (Route)other;
+		
+		for (Map.Entry<Stop, Pair<Line, LocalTime>> entry : route.entrySet()) {
+			if (!otherRoute.getRoute().keySet().contains(entry.getKey())) return false;
+			if (!entry.getValue().equals(otherRoute.getRoute().get(entry.getKey()))) return false;
+		}
+		
+		return true;
+	}
+	
 	private Map<Stop, Pair<Line, LocalTime>> route;
 }

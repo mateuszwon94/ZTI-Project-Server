@@ -3,8 +3,8 @@ package zti.server.util;
 import java.util.Map.Entry;
 
 /**
- * @author Mateusz Winiarski
  * Prosta klasa reprezentujaca pare klucz-wartosc
+ * @author Mateusz Winiarski
  * @param <K> typ klucza
  * @param <V> typ wartosci
  */
@@ -51,6 +51,19 @@ public class Pair<K, V> implements Entry<K, V> {
         final V oldValue = this.value;
         this.value = value;
         return oldValue;
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+    	if (other == null) return false;
+    	if (other == this) return true;
+    	if (!(other instanceof  Pair<?,?>)) return false;
+    	
+    	Pair otherPair = (Pair)other;
+    	if (!key.equals(otherPair.key)) return false;
+    	if (!value.equals(otherPair.value)) return false;
+    	
+    	return true;
     }
 
     private final K key;

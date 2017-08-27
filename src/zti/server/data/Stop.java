@@ -138,6 +138,16 @@ public class Stop implements Serializable {
 		return stopElement;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (obj == this) return true;
+		if (!(obj instanceof Stop)) return false;
+		
+		Stop otherStop = (Stop)obj;
+		return id.equals(otherStop.id);
+	}
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;

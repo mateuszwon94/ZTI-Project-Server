@@ -70,23 +70,29 @@ public final class Util {
 	 * @return Lista przystankow posrednich
 	 * @throws PathNotFoundException jesli nie da sie dotrzec z przystanku poczatkowego do docelowego
 	 */
-	/**
-	 * @param fromID
-	 * @param toID
-	 * @return
-	 * @throws PathNotFoundException
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 */
 	public static List<Stop> generatePath(Integer fromID, Integer toID)
+			throws PathNotFoundException, ClassNotFoundException, SQLException {
+		// pobranie przystankow i linii z serwera
+		Map<Integer, Stop> stopMap = DataBaseConnection.getStopMap();
+
+		return generatePath(fromID, toID, stopMap);
+	}
+
+	/**
+	 * implementacja algorytmu A*
+	 * @param fromID ID przystanku poczatkowego
+	 * @param toID ID przystanku docelowego
+	 * @param stopMap mapa z wszystkimi przystankami w miescie
+	 * @return Lista przystankow posrednich
+	 * @throws PathNotFoundException jesli nie da sie dotrzec z przystanku poczatkowego do docelowego
+	 */
+	public static List<Stop> generatePath(Integer fromID, Integer toID, Map<Integer, Stop> stopMap)
 			throws PathNotFoundException, ClassNotFoundException, SQLException {
 		if (fromID == null)
 			throw new NullPointerException("fromID");
 		else if (toID == null)
 			throw new NullPointerException("toID");
 
-		// pobranie przystankow i linii z serwera
-		Map<Integer, Stop> stopMap = DataBaseConnection.getStopMap();
 		Stop from = stopMap.getOrDefault(fromID, null);
 		Stop to = stopMap.getOrDefault(toID, null);
 		if (from == null)
@@ -193,11 +199,24 @@ public final class Util {
 	 * @param startTime czas rozpoczecia podrozy
 	 * @return wygenerowana trasa
 	 */
-	public static Route generateRoute(List<Stop> path, LocalTime startTime)
+	public static Route generateRoute(List<Stop> path, LocalTime startTime) 
 			throws ClassNotFoundException, SQLException {
 		Map<Integer, Line> allLines = DataBaseConnection.getLineMap();
 		Map<Integer, Stop> allStops = DataBaseConnection.getStopMap();
-
+	
+		return generateRoute(path, startTime, allLines, allStops);
+	}
+	
+	/**
+	 * Generuje trase przejazdu na podstawie sciezki i czasu odjazdu
+	 * @param path sciezka trasy
+	 * @param startTime czas rozpoczecia podrozy
+	 * @param allLines wszystkie dostepne linie w miescie
+	 * @param allStops wszystkie dostepne przystanki w miescie
+	 * @return wygenerowana trasa
+	 */
+	public static Route generateRoute(List<Stop> path, LocalTime startTime, Map<Integer, Line> allLines, Map<Integer, Stop> allStops)
+			throws ClassNotFoundException, SQLException {
 		Map<Stop, Pair<Line, LocalTime>> route = new HashMap<Stop, Pair<Line, LocalTime>>();
 		Line currentLine = null;
 		LocalTime currentTime = LocalTime.of(startTime.getHour(), startTime.getMinute());

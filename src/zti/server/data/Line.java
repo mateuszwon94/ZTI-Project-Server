@@ -146,6 +146,16 @@ public class Line implements Serializable {
 		return lineElement;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (obj == this) return true;
+		if (!(obj instanceof Line)) return false;
+
+		Line otherLine = (Line) obj;
+		return number.equals(otherLine.number);
+	}
+	
 	@Id
 	private Integer number;
 	
