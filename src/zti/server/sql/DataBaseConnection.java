@@ -2,31 +2,17 @@ package zti.server.sql;
 
 import java.util.*;
 
-import org.w3c.dom.Element;
-
-import zti.server.Stops;
-import zti.server.data.*;
-import zti.server.util.Util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
- 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
-import javax.annotation.Resource;
-import javax.sql.DataSource;
-
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import zti.server.data.*;
  
 /**
  * @author Mateusz Winiarski

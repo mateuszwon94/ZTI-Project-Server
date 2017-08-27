@@ -1,16 +1,11 @@
 package zti.server.data.converter;
 
 import zti.server.sql.PostgreSQLIntArray;
-import org.postgresql.jdbc4.Jdbc4Array;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
-import java.sql.Array;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import javax.persistence.Entity;
 
 /**
  * @author Mateusz Winiarski

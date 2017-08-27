@@ -1,11 +1,11 @@
 package zti.server.sql;
 
-import zti.server.data.Constants;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Map;
+
+import zti.server.data.Constants;
 
 /**
  * @author Mateusz Winiarski

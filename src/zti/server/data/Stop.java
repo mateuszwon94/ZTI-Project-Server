@@ -8,7 +8,6 @@ import javax.persistence.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import zti.server.sql.DataBaseConnection;
 import zti.server.util.Util;
 
 /**
