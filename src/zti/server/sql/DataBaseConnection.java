@@ -141,7 +141,7 @@ public final class DataBaseConnection {
 		Class.forName("org.postgresql.Driver");
 		try (Connection conn = DriverManager.getConnection(url, username, password);
 			 Statement stmt = conn.createStatement();
-			 ResultSet rset = stmt.executeQuery(Constants.Querys.GET_SINGLE_STOP.replace("{$0}", stopId.toString()))) {
+			 ResultSet rset = stmt.executeQuery(Constants.Querys.GET_SINGLE_STOP.replace(Constants.Querys.OBJECT, stopId.toString()))) {
 			Stop stop = new Stop();
 
 			rset.next();
@@ -167,7 +167,7 @@ public final class DataBaseConnection {
 		Class.forName("org.postgresql.Driver");
 		try (Connection conn = DriverManager.getConnection(url, username, password);
 			 Statement stmt = conn.createStatement();
-			 ResultSet rset = stmt.executeQuery(Constants.Querys.GET_SINGLE_LINE.replace("{$0}", lineNumber.toString()))) {
+			 ResultSet rset = stmt.executeQuery(Constants.Querys.GET_SINGLE_LINE.replace(Constants.Querys.OBJECT, lineNumber.toString()))) {
 			Line line = new Line();
 
 			rset.next();

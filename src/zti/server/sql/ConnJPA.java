@@ -50,7 +50,7 @@ public class ConnJPA {
 	 */
 	public Stop getStop(Integer stopId) {
 		try {
-			return (Stop) entityManager.createQuery("SELECT s FROM Stop s WHERE s.id = " + stopId.toString()).getSingleResult();
+			return (Stop) entityManager.createQuery(Constants.Querys.GET_SINGLE_STOP_JPA.replace(Constants.Querys.OBJECT, stopId.toString())).getSingleResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -63,7 +63,7 @@ public class ConnJPA {
 	 */
 	public Line getLine(Integer lineNumber) {
 		try {
-			return (Line) entityManager.createQuery("SELECT l FROM Line l WHERE l.number = " + lineNumber.toString()).getSingleResult();
+			return (Line) entityManager.createQuery(Constants.Querys.GET_SINGLE_LINE_JPA.replace(Constants.Querys.OBJECT, lineNumber.toString())).getSingleResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;

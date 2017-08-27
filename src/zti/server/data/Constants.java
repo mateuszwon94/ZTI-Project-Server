@@ -53,9 +53,13 @@ public final class Constants {
 	 * Obecnie nie uzywane
 	 */
 	public final class Querys {
-		public static final String GET_ALL_STOPS = "SELECT * FROM public.stops ORDER BY id";
-		public static final String GET_ALL_LINES = "SELECT * FROM public.lines ORDER BY number";
-		public static final String GET_SINGLE_LINE = "SELECT * FROM public.lines WHERE number = {$0};";
-		public static final String GET_SINGLE_STOP = "SELECT * FROM public.stops WHERE id = {$0};";
+		public static final String OBJECT 				= "{$0}";
+		public static final String GET_ALL_STOPS 		= "SELECT * FROM public.stops ORDER BY id";
+		public static final String GET_ALL_LINES 		= "SELECT * FROM public.lines ORDER BY number";
+		public static final String GET_SINGLE_LINE 		= "SELECT * FROM public.lines WHERE number = {$0};";
+		public static final String GET_SINGLE_STOP 		= "SELECT * FROM public.stops WHERE id = {$0};";
+		
+		public static final String GET_SINGLE_LINE_JPA 	= "SELECT l FROM Line l WHERE l.number = {$0}";
+		public static final String GET_SINGLE_STOP_JPA 	= "SELECT s FROM Stop s WHERE s.id = {$0}";
 	}
 }
